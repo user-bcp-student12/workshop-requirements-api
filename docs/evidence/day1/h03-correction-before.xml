@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="3" skipped="0" tests="4" time="0.628" timestamp="2026-10-19T15:52:26.616056-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_h03_correction_preserves_literal_text[Trainer's notes-Student's requirements]" time="0.036">
+      <failure message="assert 500 == 201&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">task_client = &lt;starlette.testclient.TestClient object at 0x0000019531D49940&gt;
+title = "Trainer's notes", description = "Student's requirements"
+
+    @pytest.mark.parametrize(
+        ("title", "description"),
+        [("Trainer's notes", "Student's requirements"), ('Quoted "title"', "Revisi\u00f3n \u65e5\u672c\u8a9e")],
+    )
+    def test_h03_correction_preserves_literal_text(task_client: TestClient, title: str, description: str) -&gt; None:
+        response = task_client.post(
+            "/api/tasks", headers=headers(), json={"title": title, "description": description}
+        )
+&gt;       assert response.status_code == 201
+E       assert 500 == 201
+E        +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests\test_api.py:159: AssertionError</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h03_correction_preserves_literal_text[Quoted &quot;title&quot;-Revisi\xf3n \u65e5\u672c\u8a9e]" time="0.034" />
+    <testcase classname="tests.test_api" name="test_h03_correction_special_owner_is_isolated" time="0.023">
+      <failure message="assert 500 == 200&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">task_client = &lt;starlette.testclient.TestClient object at 0x0000019532EDA210&gt;
+
+    def test_h03_correction_special_owner_is_isolated(task_client: TestClient) -&gt; None:
+        owner_headers = headers("o'brien")
+        listed = task_client.get("/api/tasks", headers=owner_headers)
+&gt;       assert listed.status_code == 200
+E       assert 500 == 200
+E        +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests\test_api.py:171: AssertionError</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h03_correction_rolls_back_failed_insert" time="0.029">
+      <failure message="assert not True&#10; +  where True = &lt;sqlite3.Connection object at 0x0000019532E6C7C0&gt;.in_transaction">task_client = &lt;starlette.testclient.TestClient object at 0x0000019532EC15B0&gt;
+
+    def test_h03_correction_rolls_back_failed_insert(task_client: TestClient) -&gt; None:
+        connection = task_client.app.state.connection
+        connection.execute(
+            "CREATE TRIGGER reject_test_task BEFORE INSERT ON tasks "
+            "WHEN NEW.title = 'Rejected' BEGIN SELECT RAISE(ABORT, 'synthetic database error'); END"
+        )
+        response = task_client.post("/api/tasks", headers=headers(), json={"title": "Rejected"})
+        assert response.status_code == 500
+&gt;       assert not connection.in_transaction
+E       assert not True
+E        +  where True = &lt;sqlite3.Connection object at 0x0000019532E6C7C0&gt;.in_transaction
+
+tests\test_api.py:192: AssertionError</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

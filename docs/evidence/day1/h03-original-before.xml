@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="1" skipped="0" tests="32" time="1.917" timestamp="2026-10-19T17:38:34.112446-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_h03_characterization_lists_in_order[None]" time="0.071" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_lists_in_order[]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_lists_in_order[student]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_creates_and_persists[payload0-expected0]" time="0.037" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_creates_and_persists[payload1-expected1]" time="0.035" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_creates_and_persists[payload2-expected2]" time="0.035" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_summary_states" time="0.068" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_empty_owner" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_requires_object[None]" time="0.024" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_requires_object[payload1]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_requires_object[not an object]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h03_correction_preserves_literal_text[Trainer's notes-Student's requirements]" time="0.065" />
+    <testcase classname="tests.test_api" name="test_h03_correction_preserves_literal_text[Quoted &quot;title&quot;-Revisi\xf3n \u65e5\u672c\u8a9e]" time="0.034" />
+    <testcase classname="tests.test_api" name="test_h03_correction_special_owner_is_isolated" time="0.039" />
+    <testcase classname="tests.test_api" name="test_h03_correction_rolls_back_failed_insert" time="0.044" />
+    <testcase classname="tests.test_api" name="test_h03_repository_rolls_back_missing_created_row" time="0.035" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-STUDENT]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-TRAINER]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-ADMIN]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-STUDENT]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-TRAINER]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-ADMIN]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-STUDENT]" time="0.037" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-TRAINER]" time="0.035" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-ADMIN]" time="0.035" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-STUDENT]" time="0.058" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-TRAINER]" time="0.042" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-ADMIN]" time="0.034" />
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[None]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[42]" time="0.034" />
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[supplied_owner2]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_known_bug_h03_concurrent_rollback_preserves_success" time="0.038">
+      <failure message="AssertionError: A successful task was lost after another request rolled back&#10;assert {'createdAt': '2026-10-19 22:38:35', 'description': '', 'id': 4, 'owner': 'student', ...} in [{'createdAt': '2026-10-19 22:38:35', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:38:35', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}]&#10; +  where {'createdAt': '2026-10-19 22:38:35', 'description': '', 'id': 4, 'owner': 'student', ...} = json()&#10; +    where json = &lt;Response [201 Created]&gt;.json&#10; +  and   [{'createdAt': '2026-10-19 22:38:35', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:38:35', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}] = json()&#10; +    where json = &lt;Response [200 OK]&gt;.json">tests\test_api.py:765: in test_known_bug_h03_concurrent_rollback_preserves_success
+    assert created.json() in persisted.json(), "A successful task was lost after another request rolled back"
+E   AssertionError: A successful task was lost after another request rolled back
+E   assert {'createdAt': '2026-10-19 22:38:35', 'description': '', 'id': 4, 'owner': 'student', ...} in [{'createdAt': '2026-10-19 22:38:35', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:38:35', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}]
+E    +  where {'createdAt': '2026-10-19 22:38:35', 'description': '', 'id': 4, 'owner': 'student', ...} = json()
+E    +    where json = &lt;Response [201 Created]&gt;.json
+E    +  and   [{'createdAt': '2026-10-19 22:38:35', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:38:35', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}] = json()
+E    +    where json = &lt;Response [200 OK]&gt;.json</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

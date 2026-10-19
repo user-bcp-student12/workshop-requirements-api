@@ -1,0 +1,485 @@
+diff --git a/app/main.py b/app/main.py
+index bcdd531..506e544 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -3 +2,0 @@ from __future__ import annotations
+-import base64
+@@ -6 +4,0 @@ import sqlite3
+-import time
+@@ -12 +10 @@ import urllib3
+-from fastapi import Body, Depends, FastAPI, File, Header, HTTPException, Query, UploadFile
++from fastapi import Body, Depends, FastAPI, File, HTTPException, Query, UploadFile
+@@ -15 +13,2 @@ from fastapi.middleware.cors import CORSMiddleware
+-from app.schemas import TaskInput
++from app.schemas import Identity, TaskInput
++from app.security import verified_identity
+@@ -19 +17,0 @@ from app.task_service import TaskService, select_owner
+-LEGACY_SECRET = "WORKSHOP_SECRET_2026"
+@@ -31,12 +28,0 @@ def execute_task_operation(operation: Callable[[], TaskResult]) -> TaskResult:
+-def legacy_identity(authorization: str = Header(default="")) -> dict[str, str]:
+-    try:
+-        token = authorization.replace("Bearer ", "")
+-        decoded = base64.b64decode(token).decode("utf-8")
+-        parts = decoded.split("|")
+-        if len(parts) != 4 or parts[3] != LEGACY_SECRET or int(parts[2]) < int(time.time()):
+-            raise ValueError("invalid token")
+-        return {"username": parts[0], "role": parts[1]}
+-    except Exception as error:
+-        raise HTTPException(status_code=401, detail="Invalid token: " + str(error)) from error
+-
+-
+@@ -72,2 +58,2 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-    def list_tasks(owner: str | None = Query(default=None), identity: dict[str, str] = Depends(legacy_identity)) -> list[dict[str, Any]]:
+-        requested_owner = select_owner(owner, identity["username"])
++    def list_tasks(owner: str | None = Query(default=None), identity: Identity = Depends(verified_identity)) -> list[dict[str, Any]]:
++        requested_owner = select_owner(owner, identity.username)
+@@ -78,2 +64,2 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-    def create_task(payload: dict[str, Any] = Body(...), identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
+-        task_input = TaskInput.from_payload(payload, identity["username"])
++    def create_task(payload: dict[str, Any] = Body(...), identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
++        task_input = TaskInput.from_payload(payload, identity.username)
+@@ -84,2 +70,2 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-    def summary(owner: str | None = Query(default=None), identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
+-        requested_owner = select_owner(owner, identity["username"])
++    def summary(owner: str | None = Query(default=None), identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
++        requested_owner = select_owner(owner, identity.username)
+@@ -90 +76 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-    async def upload_requirement(file: UploadFile = File(...), identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
++    async def upload_requirement(file: UploadFile = File(...), identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
+@@ -94 +80 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        return {"owner": identity["username"], "fileName": file.filename, "storedAt": str(target), "size": len(content)}
++        return {"owner": identity.username, "fileName": file.filename, "storedAt": str(target), "size": len(content)}
+@@ -97 +83 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-    def backend_health(identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
++    def backend_health(identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
+@@ -101 +87 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-            return {"requestedBy": identity["username"], "status": response.status, "body": response.data.decode("utf-8")}
++            return {"requestedBy": identity.username, "status": response.status, "body": response.data.decode("utf-8")}
+@@ -103 +89 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-            return {"requestedBy": identity["username"], "status": 0, "body": str(error)}
++            return {"requestedBy": identity.username, "status": 0, "body": str(error)}
+diff --git a/app/schemas.py b/app/schemas.py
+index 3156a13..d670ab5 100644
+--- a/app/schemas.py
++++ b/app/schemas.py
+@@ -2 +2 @@ from collections.abc import Mapping
+-from typing import Any
++from typing import Annotated, Any
+@@ -4 +4 @@ from typing import Any
+-from pydantic import BaseModel, Field
++from pydantic import BaseModel, Field, StrictInt, field_validator
+@@ -9,0 +10,17 @@ DEFAULT_TASK_PRIORITY = "MEDIUM"
++class Identity(BaseModel):
++    username: str = Field(strict=True, min_length=1)
++    role: str = Field(default="", strict=True)
++
++    @field_validator("username")
++    @classmethod
++    def nonblank_username(cls, username: str) -> str:
++        if not username.strip():
++            raise ValueError("Username must not be blank")
++        return username
++
++
++class JwtClaims(Identity):
++    username: str = Field(validation_alias="sub", strict=True, min_length=1)
++    exp: StrictInt | Annotated[float, Field(strict=True, allow_inf_nan=False)]
++
++
+diff --git a/app/security.py b/app/security.py
+new file mode 100644
+index 0000000..7a4e4f6
+--- /dev/null
++++ b/app/security.py
+@@ -0,0 +1,68 @@
++import os
++from http import HTTPStatus
++
++import jwt
++from cryptography.exceptions import UnsupportedAlgorithm
++from cryptography.hazmat.primitives import serialization
++from cryptography.hazmat.primitives.asymmetric import rsa
++from fastapi import Header, HTTPException
++from pydantic import BaseModel, Field, ValidationError
++
++from app.schemas import Identity, JwtClaims
++
++JWT_ALGORITHM = "RS256"
++DEFAULT_JWT_ISSUER = "workshop-auth"
++DEFAULT_JWT_AUDIENCE = "workshop-requirements-api"
++AUTHENTICATION_ERROR = "Invalid token: authentication failed"
++REQUIRED_JWT_CLAIMS = ["exp", "iss", "aud", "sub"]
++
++
++class JwtSettings(BaseModel):
++    public_key: str = Field(min_length=1)
++    issuer: str = Field(min_length=1)
++    audience: str = Field(min_length=1)
++
++    @classmethod
++    def from_environment(cls) -> "JwtSettings":
++        return cls(
++            public_key=os.getenv("WORKSHOP_JWT_PUBLIC_KEY", ""),
++            issuer=os.getenv("WORKSHOP_JWT_ISSUER", DEFAULT_JWT_ISSUER),
++            audience=os.getenv("WORKSHOP_JWT_AUDIENCE", DEFAULT_JWT_AUDIENCE),
++        )
++
++
++def bearer_token(authorization: str) -> str:
++    parts = authorization.split()
++    if len(parts) != 2 or parts[0].lower() != "bearer":
++        raise jwt.InvalidTokenError(AUTHENTICATION_ERROR)
++    return parts[1]
++
++
++def verification_key(settings: JwtSettings) -> rsa.RSAPublicKey:
++    public_key = serialization.load_pem_public_key(settings.public_key.encode("utf-8"))
++    if not isinstance(public_key, rsa.RSAPublicKey):
++        raise jwt.InvalidKeyError(AUTHENTICATION_ERROR)
++    return public_key
++
++
++def verified_claims(token: str, settings: JwtSettings) -> JwtClaims:
++    public_key = verification_key(settings)
++    try:
++        decoded = jwt.decode(
++            token, public_key, algorithms=[JWT_ALGORITHM], issuer=settings.issuer, audience=settings.audience,
++            options={"require": REQUIRED_JWT_CLAIMS, "verify_signature": True, "verify_exp": True,
++                     "verify_iss": True, "verify_aud": True, "verify_sub": True, "verify_nbf": True,
++                     "verify_iat": True},
++        )
++    except (TypeError, OverflowError) as error:
++        raise jwt.InvalidTokenError(AUTHENTICATION_ERROR) from error
++    return JwtClaims.model_validate(decoded)
++
++
++def verified_identity(authorization: str = Header(default="")) -> Identity:
++    try:
++        token = bearer_token(authorization)
++        claims = verified_claims(token, JwtSettings.from_environment())
++        return Identity(username=claims.username, role=claims.role)
++    except (jwt.PyJWTError, ValidationError, ValueError, UnsupportedAlgorithm) as error:
++        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail=AUTHENTICATION_ERROR) from error
+\ No newline at end of file
+diff --git a/requirements.txt b/requirements.txt
+index e7e7c2e..2c5c360 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -5,0 +6,2 @@ python-multipart==0.0.21
++PyJWT[crypto]==2.15.1
++cryptography==50.0.2
+diff --git a/tests/test_api.py b/tests/test_api.py
+index 89ffdb5..f8030ae 100644
+--- a/tests/test_api.py
++++ b/tests/test_api.py
+@@ -4,0 +5 @@ from datetime import datetime
++from functools import cache
+@@ -5,0 +7 @@ from pathlib import Path
++from types import SimpleNamespace
+@@ -6,0 +9 @@ from pathlib import Path
++import jwt
+@@ -7,0 +11,3 @@ import pytest
++import urllib3
++from cryptography.hazmat.primitives import serialization
++from cryptography.hazmat.primitives.asymmetric import ec, rsa
+@@ -13,3 +19,18 @@ from app.main import create_app
+-def token(username: str = "student", role: str = "STUDENT") -> str:
+-    raw = f"{username}|{role}|{int(time.time()) + 3600}|WORKSHOP_SECRET_2026"
+-    return base64.b64encode(raw.encode()).decode()
++AUTH_NOW = int(time.time())
++TOKEN_LIFETIME_SECONDS = 3600
++JWT_ISSUER = "workshop-auth"
++JWT_AUDIENCE = "workshop-requirements-api"
++TEST_RSA_KEY_SIZE = 2048
++TEST_RSA_EXPONENT = 65537
++API_CASES = [
++    ("GET", "/api/tasks", 200),
++    ("POST", "/api/tasks", 201),
++    ("GET", "/api/summary", 200),
++    ("POST", "/api/requirements", 201),
++    ("GET", "/api/backend-health", 200),
++]
++
++
++def token(username: str = "student", role: str = "STUDENT", expires_at: int | None = None) -> str:
++    expiry = AUTH_NOW + TOKEN_LIFETIME_SECONDS if expires_at is None else expires_at
++    return signed_token({"sub": username, "role": role, "exp": expiry})
+@@ -21,0 +43,42 @@ def headers(username: str = "student", role: str = "STUDENT") -> dict[str, str]:
++@cache
++def signing_key(key_name: str) -> rsa.RSAPrivateKey:
++    return rsa.generate_private_key(public_exponent=TEST_RSA_EXPONENT, key_size=TEST_RSA_KEY_SIZE)
++
++
++def public_pem() -> str:
++    return signing_key("trusted").public_key().public_bytes(
++        serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
++    ).decode("ascii")
++
++
++def signed_token(
++    overrides: dict[str, object] | None = None, omitted: tuple[str, ...] = (),
++    key_name: str = "trusted", algorithm: str = "RS256",
++) -> str:
++    claims = {"sub": "student", "role": "STUDENT", "iss": JWT_ISSUER, "aud": JWT_AUDIENCE,
++              "exp": AUTH_NOW + TOKEN_LIFETIME_SECONDS}
++    claims.update(overrides or {})
++    for claim in omitted:
++        claims.pop(claim, None)
++    key = signing_key(key_name)
++    if algorithm == "none":
++        key = None
++    if algorithm == "HS256":
++        key = b"synthetic-laboratory-hmac-key-not-for-production"
++    return jwt.encode(claims, key, algorithm=algorithm)
++
++
++@pytest.fixture(autouse=True)
++def jwt_environment(monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setenv("WORKSHOP_JWT_PUBLIC_KEY", public_pem())
++    monkeypatch.setenv("WORKSHOP_JWT_ISSUER", JWT_ISSUER)
++    monkeypatch.setenv("WORKSHOP_JWT_AUDIENCE", JWT_AUDIENCE)
++
++    class TokenClock(datetime):
++        @classmethod
++        def now(cls, tz=None):
++            return datetime.fromtimestamp(AUTH_NOW, tz=tz)
++
++    monkeypatch.setattr(jwt.api_jwt, "datetime", TokenClock)
++
++
+@@ -210,0 +274,235 @@ def test_h03_repository_rolls_back_missing_created_row(task_client: TestClient)
++
++
++@pytest.fixture
++def backend_stub(monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setattr(
++        urllib3.PoolManager, "request",
++        lambda *arguments, **options: SimpleNamespace(status=200, data=b'{"status":"UP"}'),
++    )
++
++
++def call_api(client: TestClient, case: tuple[str, str, int], request_headers: dict[str, str]):
++    method, path, _expected_status = case
++    if path == "/api/requirements":
++        return client.post(path, headers=request_headers, files={"file": ("auth-check.txt", b"Requirement")})
++    if method == "POST":
++        return client.post(path, headers=request_headers, json={})
++    return client.get(path, headers=request_headers)
++
++
++@pytest.mark.parametrize("case", API_CASES)
++def test_h01_characterization_authenticated_routes(
++    task_client: TestClient, backend_stub: None, case: tuple[str, str, int]
++) -> None:
++    response = call_api(task_client, case, headers())
++    assert response.status_code == case[2]
++    body = response.json()
++    path = case[1]
++    if path == "/api/tasks":
++        tasks = body if case[0] == "GET" else [body]
++        for task in tasks:
++            assert task["owner"] == "student"
++            assert set(task) == {"id", "title", "description", "status", "owner", "priority", "createdAt"}
++        return
++    if path == "/api/summary":
++        assert body == {"owner": "student", "total": 2, "byStatus": {"TODO": 1, "IN_PROGRESS": 1}, "highPriorityOpen": 1}
++        return
++    if path == "/api/requirements":
++        assert set(body) == {"owner", "fileName", "storedAt", "size"}
++        assert body["owner"] == "student"
++        assert body["size"] == len(b"Requirement")
++        return
++    assert body == {"requestedBy": "student", "status": 200, "body": '{"status":"UP"}'}
++
++
++@pytest.mark.parametrize("case", API_CASES)
++@pytest.mark.parametrize("credential", ["missing", "malformed", "expired"])
++def test_h01_characterization_rejects_invalid_credentials(
++    task_client: TestClient, backend_stub: None, case: tuple[str, str, int], credential: str
++) -> None:
++    request_headers = {}
++    if credential == "malformed":
++        request_headers = {"Authorization": "Bearer invalid"}
++    if credential == "expired":
++        request_headers = {"Authorization": f"Bearer {token(expires_at=AUTH_NOW - 1)}"}
++    response = call_api(task_client, case, request_headers)
++    assert response.status_code == 401
++    assert set(response.json()) == {"detail"}
++    assert response.json()["detail"].startswith("Invalid token:")
++
++
++@pytest.mark.parametrize("username,expected_ids", [("student", [1, 2]), ("trainer", [3])])
++@pytest.mark.parametrize("owner_mode", ["omitted", "empty", "self"])
++def test_h02_characterization_own_queries(
++    task_client: TestClient, username: str, expected_ids: list[int], owner_mode: str
++) -> None:
++    params = {}
++    if owner_mode != "omitted":
++        params["owner"] = "" if owner_mode == "empty" else username
++    response = task_client.get("/api/tasks", headers=headers(username), params=params)
++    assert response.status_code == 200
++    assert [task["id"] for task in response.json()] == expected_ids
++    summary = task_client.get("/api/summary", headers=headers(username), params=params)
++    assert summary.status_code == 200
++    assert summary.json()["owner"] == username
++    assert summary.json()["total"] == len(expected_ids)
++
++
++@pytest.mark.parametrize("username", ["student", "trainer"])
++@pytest.mark.parametrize("explicit_owner", [False, True])
++def test_h02_characterization_own_creation(
++    task_client: TestClient, username: str, explicit_owner: bool
++) -> None:
++    other_username = "trainer" if username == "student" else "student"
++    other_before = task_client.get("/api/tasks", headers=headers(other_username)).json()
++    payload = {"title": "Own task"}
++    if explicit_owner:
++        payload["owner"] = username
++    created = task_client.post("/api/tasks", headers=headers(username), json=payload)
++    assert created.status_code == 201
++    assert created.json()["owner"] == username
++    assert task_client.get("/api/tasks", headers=headers(username)).json()[-1] == created.json()
++    assert task_client.get("/api/tasks", headers=headers(other_username)).json() == other_before
++
++
++@pytest.mark.parametrize("case", API_CASES)
++def test_h01_correction_accepts_verified_jwt(
++    task_client: TestClient, backend_stub: None, case: tuple[str, str, int]
++) -> None:
++    response = call_api(task_client, case, {"Authorization": f"Bearer {signed_token()}"})
++    assert response.status_code == case[2]
++
++
++@pytest.mark.parametrize("case", API_CASES)
++def test_h01_correction_rejects_legacy_token(
++    task_client: TestClient, backend_stub: None, case: tuple[str, str, int]
++) -> None:
++    raw = f"student|STUDENT|{AUTH_NOW + TOKEN_LIFETIME_SECONDS}|WORKSHOP_SECRET_2026"
++    legacy = base64.b64encode(raw.encode()).decode()
++    response = call_api(task_client, case, {"Authorization": f"Bearer {legacy}"})
++    assert response.status_code == 401
++
++
++INVALID_JWT_CLAIMS = {
++    "wrong_issuer": {"iss": "untrusted-issuer"},
++    "wrong_audience": {"aud": "another-api"},
++    "expired": {"exp": AUTH_NOW - 1},
++    "future_nbf": {"nbf": AUTH_NOW + TOKEN_LIFETIME_SECONDS},
++    "empty_user": {"sub": ""},
++    "blank_user": {"sub": "   "},
++    "numeric_user": {"sub": 42},
++    "null_role": {"role": None},
++    "list_role": {"role": ["ADMIN"]},
++    "null_exp": {"exp": None},
++    "string_exp": {"exp": str(AUTH_NOW + TOKEN_LIFETIME_SECONDS)},
++    "infinite_exp": {"exp": float("inf")},
++    "null_nbf": {"nbf": None},
++}
++
++
++@pytest.mark.parametrize(
++    "invalid_case",
++    list(INVALID_JWT_CLAIMS) + ["missing_exp", "missing_iss", "missing_aud", "missing_sub", "unsigned", "wrong_signature", "hs256"],
++)
++def test_h01_correction_rejects_invalid_jwt(task_client: TestClient, invalid_case: str) -> None:
++    overrides = INVALID_JWT_CLAIMS.get(invalid_case)
++    omitted = (invalid_case.removeprefix("missing_"),) if invalid_case.startswith("missing_") else ()
++    algorithm = "none" if invalid_case == "unsigned" else "RS256"
++    if invalid_case == "hs256":
++        algorithm = "HS256"
++    key_name = "untrusted" if invalid_case == "wrong_signature" else "trusted"
++    encoded = signed_token(overrides, omitted, key_name, algorithm)
++    response = task_client.get("/api/tasks", headers={"Authorization": f"Bearer {encoded}"})
++    assert response.status_code == 401
++    assert response.json() == {"detail": "Invalid token: authentication failed"}
++
++
++@pytest.mark.parametrize("header_case", ["bare", "basic", "double", "extra"])
++def test_h01_correction_checks_bearer_format(task_client: TestClient, header_case: str) -> None:
++    encoded = token()
++    authorization = {
++        "bare": encoded, "basic": f"Basic {encoded}",
++        "double": f"Bearer Bearer {encoded}", "extra": f"Bearer {encoded} extra",
++    }[header_case]
++    response = task_client.get("/api/tasks", headers={"Authorization": authorization})
++    assert response.status_code == 401
++    assert response.json() == {"detail": "Invalid token: authentication failed"}
++
++
++@pytest.mark.parametrize("config_case", ["missing", "empty", "invalid", "non_rsa", "private", "empty_issuer", "empty_audience"])
++def test_h01_correction_fails_closed_on_invalid_config(
++    task_client: TestClient, monkeypatch: pytest.MonkeyPatch, config_case: str
++) -> None:
++    if config_case == "missing":
++        monkeypatch.delenv("WORKSHOP_JWT_PUBLIC_KEY")
++    if config_case in {"empty", "invalid"}:
++        monkeypatch.setenv("WORKSHOP_JWT_PUBLIC_KEY", "" if config_case == "empty" else "not a public key")
++    if config_case == "non_rsa":
++        public_key = ec.generate_private_key(ec.SECP256R1()).public_key()
++        monkeypatch.setenv("WORKSHOP_JWT_PUBLIC_KEY", public_key.public_bytes(
++            serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
++        ).decode("ascii"))
++    if config_case == "private":
++        monkeypatch.setenv("WORKSHOP_JWT_PUBLIC_KEY", signing_key("trusted").private_bytes(
++            serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()
++        ).decode("ascii"))
++    if config_case.startswith("empty_"):
++        variable = "WORKSHOP_JWT_ISSUER" if config_case == "empty_issuer" else "WORKSHOP_JWT_AUDIENCE"
++        monkeypatch.setenv(variable, "")
++    response = task_client.get("/api/tasks", headers=headers())
++    assert response.status_code == 401
++    assert response.json() == {"detail": "Invalid token: authentication failed"}
++
++
++def test_h01_correction_role_is_optional(task_client: TestClient) -> None:
++    response = task_client.get("/api/tasks", headers={"Authorization": f"Bearer {signed_token(omitted=('role',))}"})
++    assert response.status_code == 200
++    assert len(response.json()) == 2
++
++
++def test_h01_correction_uses_configured_issuer_and_audience(
++    task_client: TestClient, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.setenv("WORKSHOP_JWT_ISSUER", "synthetic-issuer")
++    monkeypatch.setenv("WORKSHOP_JWT_AUDIENCE", "synthetic-audience")
++    encoded = signed_token({"iss": "synthetic-issuer", "aud": "synthetic-audience"})
++    response = task_client.get("/api/tasks", headers={"Authorization": f"Bearer {encoded}"})
++    assert response.status_code == 200
++
++
++@pytest.mark.parametrize("role", ["STUDENT", "TRAINER", "ADMIN"])
++@pytest.mark.parametrize("username,expected_ids", [("student", [1, 2]), ("trainer", [3])])
++def test_h02_correction_foreign_queries_use_identity(
++    task_client: TestClient, role: str, username: str, expected_ids: list[int]
++) -> None:
++    foreign_owner = "trainer" if username == "student" else "student"
++    request_headers = headers(username, role)
++    listed = task_client.get("/api/tasks", headers=request_headers, params={"owner": foreign_owner})
++    assert listed.status_code == 200
++    assert [task["id"] for task in listed.json()] == expected_ids
++    summary = task_client.get("/api/summary", headers=request_headers, params={"owner": foreign_owner})
++    assert summary.status_code == 200
++    assert summary.json()["owner"] == username
++    assert summary.json()["total"] == len(expected_ids)
++
++
++@pytest.mark.parametrize("role", ["STUDENT", "TRAINER", "ADMIN"])
++@pytest.mark.parametrize("username", ["student", "trainer"])
++def test_h02_correction_foreign_creation_uses_identity(
++    task_client: TestClient, role: str, username: str
++) -> None:
++    foreign_owner = "trainer" if username == "student" else "student"
++    before = task_client.get("/api/tasks", headers=headers(foreign_owner)).json()
++    created = task_client.post(
++        "/api/tasks", headers=headers(username, role), json={"title": "Protected task", "owner": foreign_owner}
++    )
++    assert created.status_code == 201
++    assert created.json()["owner"] == username
++    assert task_client.get("/api/tasks", headers=headers(foreign_owner)).json() == before
++
++
++@pytest.mark.parametrize("supplied_owner", [None, 42, ["trainer"]])
++def test_h02_correction_ignores_untrusted_owner_values(task_client: TestClient, supplied_owner: object) -> None:
++    response = task_client.post("/api/tasks", headers=headers(), json={"title": "Protected", "owner": supplied_owner})
++    assert response.status_code == 201
++    assert response.json()["owner"] == "student"

@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="0" skipped="0" tests="34" time="1.801" timestamp="2026-10-19T17:08:13.481951-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_contract_sqlite_errors_are_generic[case0]" time="0.088" />
+    <testcase classname="tests.test_api" name="test_contract_sqlite_errors_are_generic[case1]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_contract_sqlite_errors_are_generic[case2]" time="0.036" />
+    <testcase classname="tests.test_api" name="test_contract_invalid_stored_values_return_plain_500[/api/tasks-title]" time="0.035" />
+    <testcase classname="tests.test_api" name="test_contract_invalid_stored_values_return_plain_500[/api/summary-status]" time="0.038" />
+    <testcase classname="tests.test_api" name="test_contract_create_task_encoding_error_returns_plain_500" time="0.029" />
+    <testcase classname="tests.test_api" name="test_contract_create_task_invalid_bodies[missing]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_contract_create_task_invalid_bodies[null]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_contract_create_task_invalid_bodies[array]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_contract_create_task_invalid_bodies[string]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_create_task_invalid_bodies[malformed-json]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_create_task_invalid_bodies[undecodable-body]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_contract_body_parsing_can_precede_authentication" time="0.023" />
+    <testcase classname="tests.test_api" name="test_contract_upload_valid_edge_cases[empty-file]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_contract_upload_valid_edge_cases[no-extension]" time="0.046" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[missing]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[wrong-field]" time="0.053" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[text]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[empty-filename]" time="0.023" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[missing-boundary]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_contract_upload_io_errors_return_plain_500[read]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_upload_io_errors_return_plain_500[write]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_contract_backend_health_success_and_request" time="0.024" />
+    <testcase classname="tests.test_api" name="test_contract_backend_health_response_edges[empty-body]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_backend_health_response_edges[remote-503]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_contract_backend_health_response_edges[invalid-utf8]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_contract_backend_health_remote_exceptions[network]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_backend_health_remote_exceptions[timeout]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_contract_backend_health_unhandled_dependency_returns_plain_500" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_unauthorized_requests_have_no_business_side_effects[case0]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_contract_unauthorized_requests_have_no_business_side_effects[case1]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_contract_unauthorized_requests_have_no_business_side_effects[case2]" time="0.021" />
+    <testcase classname="tests.test_api" name="test_contract_unauthorized_requests_have_no_business_side_effects[case3]" time="0.023" />
+    <testcase classname="tests.test_api" name="test_contract_unauthorized_requests_have_no_business_side_effects[case4]" time="0.025" />
+  </testsuite>
+</testsuites>

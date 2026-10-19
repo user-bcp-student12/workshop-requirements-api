@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="15" skipped="0" tests="25" time="1.483" timestamp="2026-10-19T16:22:03.814972-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[omitted-student-expected_ids0]" time="0.110" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[omitted-trainer-expected_ids1]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[empty-student-expected_ids0]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[empty-trainer-expected_ids1]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[self-student-expected_ids0]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[self-trainer-expected_ids1]" time="0.032" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[False-student]" time="0.038" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[False-trainer]" time="0.042" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[True-student]" time="0.036" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[True-trainer]" time="0.036" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-STUDENT]" time="0.042">
+      <failure message="assert [3] == [1, 2]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">E   assert [3] == [1, 2]
+
+      At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-TRAINER]" time="0.028">
+      <failure message="assert [3] == [1, 2]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">E   assert [3] == [1, 2]
+
+      At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-ADMIN]" time="0.026">
+      <failure message="assert [3] == [1, 2]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">E   assert [3] == [1, 2]
+
+      At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-STUDENT]" time="0.025">
+      <failure message="assert [1, 2] == [3]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">E   assert [1, 2] == [3]
+
+      At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-TRAINER]" time="0.025">
+      <failure message="assert [1, 2] == [3]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">E   assert [1, 2] == [3]
+
+      At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-ADMIN]" time="0.023">
+      <failure message="assert [1, 2] == [3]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">E   assert [1, 2] == [3]
+
+      At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-STUDENT]" time="0.035">
+      <failure message="AssertionError: assert 'trainer' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert 'trainer' == 'student'
+
+      #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-TRAINER]" time="0.035">
+      <failure message="AssertionError: assert 'trainer' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert 'trainer' == 'student'
+
+      #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-ADMIN]" time="0.037">
+      <failure message="AssertionError: assert 'trainer' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert 'trainer' == 'student'
+
+      #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-STUDENT]" time="0.035">
+      <failure message="AssertionError: assert 'student' == 'trainer'&#10;  &#10;  #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert 'student' == 'trainer'
+
+      #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-TRAINER]" time="0.033">
+      <failure message="AssertionError: assert 'student' == 'trainer'&#10;  &#10;  #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert 'student' == 'trainer'
+
+      #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-ADMIN]" time="0.033">
+      <failure message="AssertionError: assert 'student' == 'trainer'&#10;  &#10;  #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert 'student' == 'trainer'
+
+      #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[None]" time="0.034">
+      <failure message="AssertionError: assert 'None' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ None#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert 'None' == 'student'
+
+      #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ None#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[42]" time="0.031">
+      <failure message="AssertionError: assert '42' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ 42#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   AssertionError: assert '42' == 'student'
+
+      #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ 42#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[supplied_owner2]" time="0.033">
+      <failure message="assert &quot;['trainer']&quot; == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ ['trainer']#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">E   assert "['trainer']" == 'student'
+
+      #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+      #x1B[92m+ ['trainer']#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

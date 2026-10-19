@@ -1,0 +1,455 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="58" skipped="0" tests="58" time="3.239" timestamp="2026-10-19T16:17:33.188816-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_h01_correction_accepts_verified_jwt[case0]" time="0.083">
+      <failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests\test_api.py:374: in test_h01_correction_accepts_verified_jwt
+    assert response.status_code == case[2]
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_accepts_verified_jwt[case1]" time="0.032">
+      <failure message="assert 401 == 201&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests\test_api.py:374: in test_h01_correction_accepts_verified_jwt
+    assert response.status_code == case[2]
+E   assert 401 == 201
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_accepts_verified_jwt[case2]" time="0.030">
+      <failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests\test_api.py:374: in test_h01_correction_accepts_verified_jwt
+    assert response.status_code == case[2]
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_accepts_verified_jwt[case3]" time="0.061">
+      <failure message="assert 401 == 201&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests\test_api.py:374: in test_h01_correction_accepts_verified_jwt
+    assert response.status_code == case[2]
+E   assert 401 == 201
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_accepts_verified_jwt[case4]" time="0.038">
+      <failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests\test_api.py:374: in test_h01_correction_accepts_verified_jwt
+    assert response.status_code == case[2]
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_legacy_token[case0]" time="0.035">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:384: in test_h01_correction_rejects_legacy_token
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_legacy_token[case1]" time="0.036">
+      <failure message="assert 201 == 401&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">tests\test_api.py:384: in test_h01_correction_rejects_legacy_token
+    assert response.status_code == 401
+E   assert 201 == 401
+E    +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_legacy_token[case2]" time="0.029">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:384: in test_h01_correction_rejects_legacy_token
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_legacy_token[case3]" time="0.033">
+      <failure message="assert 201 == 401&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">tests\test_api.py:384: in test_h01_correction_rejects_legacy_token
+    assert response.status_code == 401
+E   assert 201 == 401
+E    +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_legacy_token[case4]" time="0.030">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:384: in test_h01_correction_rejects_legacy_token
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[wrong_issuer]" time="0.053">
+      <failure message="AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (517) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (517) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[wrong_audience]" time="0.036">
+      <failure message="AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[expired]" time="0.034">
+      <failure message="AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (509) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (509) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[future_nbf]" time="0.031">
+      <failure message="AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[empty_user]" time="0.031">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x95 in position 129: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x95 in position 129: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[blank_user]" time="0.031">
+      <failure message="AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[numeric_user]" time="0.033">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xbd in position 128: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xbd in position 128: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[null_role]" time="0.029">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x84 in position 129: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x84 in position 129: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[list_role]" time="0.031">
+      <failure message="AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (509) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (509) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[null_exp]" time="0.028">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x89 in position 129: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x89 in position 129: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[string_exp]" time="0.030">
+      <failure message="assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xe0 in position 137: invalid continuation byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xe0 in position 137: invalid continuation byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[infinite_exp]" time="0.032">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xc0 in position 136: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xc0 in position 136: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[null_nbf]" time="0.032">
+      <failure message="assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xf3 in position 147: invalid continuation byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xf3 in position 147: invalid continuation byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[missing_exp]" time="0.031">
+      <failure message="assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode bytes in position 122-123: invalid continuation byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode bytes in position 122-123: invalid continuation byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[missing_iss]" time="0.027">
+      <failure message="AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (489) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (489) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[missing_aud]" time="0.025">
+      <failure message="AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[missing_sub]" time="0.029">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x87 in position 119: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x87 in position 119: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[unsigned]" time="0.028">
+      <failure message="AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...rect padding'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Incorrect padding#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[wrong_signature]" time="0.058">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x92 in position 138: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0x92 in position 138: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_rejects_invalid_jwt[hs256]" time="0.026">
+      <failure message="AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (221) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:418: in test_h01_correction_rejects_invalid_jwt
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   AssertionError: assert {'detail': 'I...ultiple of 4'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: Invalid base64-encoded string: number of data characters (221) cannot be 1 more than a multiple of 4#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_checks_bearer_format[bare]" time="0.024">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:429: in test_h01_correction_checks_bearer_format
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_checks_bearer_format[basic]" time="0.026">
+      <failure message="assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xab in position 1: invalid start byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:430: in test_h01_correction_checks_bearer_format
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...d start byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xab in position 1: invalid start byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_checks_bearer_format[double]" time="0.028">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:429: in test_h01_correction_checks_bearer_format
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_checks_bearer_format[extra]" time="0.027">
+      <failure message="assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}&#10;  &#10;  Differing items:&#10;  #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m&quot;#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xc6 in position 48: invalid continuation byte#x1B[39;49;00m#x1B[33m&quot;#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:430: in test_h01_correction_checks_bearer_format
+    assert response.json() == {"detail": "Invalid token: authentication failed"}
+E   assert {'detail': 'I...nuation byte'} == {'detail': 'I...ation failed'}
+E
+E     Differing items:
+E     #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m"#x1B[39;49;00m#x1B[33mInvalid token: #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mutf-8#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33m codec can#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[33mt decode byte 0xc6 in position 48: invalid continuation byte#x1B[39;49;00m#x1B[33m"#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m != #x1B[0m{#x1B[33m'#x1B[39;49;00m#x1B[33mdetail#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m: #x1B[33m'#x1B[39;49;00m#x1B[33mInvalid token: authentication failed#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_fails_closed_on_invalid_config[missing]" time="0.027">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:454: in test_h01_correction_fails_closed_on_invalid_config
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_fails_closed_on_invalid_config[empty]" time="0.027">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:454: in test_h01_correction_fails_closed_on_invalid_config
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_fails_closed_on_invalid_config[invalid]" time="0.024">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:454: in test_h01_correction_fails_closed_on_invalid_config
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_fails_closed_on_invalid_config[non_rsa]" time="0.025">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:454: in test_h01_correction_fails_closed_on_invalid_config
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_fails_closed_on_invalid_config[private]" time="0.024">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:454: in test_h01_correction_fails_closed_on_invalid_config
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_fails_closed_on_invalid_config[empty_issuer]" time="0.025">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:454: in test_h01_correction_fails_closed_on_invalid_config
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_fails_closed_on_invalid_config[empty_audience]" time="0.026">
+      <failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_api.py:454: in test_h01_correction_fails_closed_on_invalid_config
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_role_is_optional" time="0.024">
+      <failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests\test_api.py:460: in test_h01_correction_role_is_optional
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h01_correction_uses_configured_issuer_and_audience" time="0.025">
+      <failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests\test_api.py:471: in test_h01_correction_uses_configured_issuer_and_audience
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-STUDENT]" time="0.028">
+      <failure message="assert [3] == [1, 2]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:483: in test_h02_correction_foreign_queries_use_identity
+    assert [task["id"] for task in listed.json()] == expected_ids
+E   assert [3] == [1, 2]
+E
+E     At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-TRAINER]" time="0.044">
+      <failure message="assert [3] == [1, 2]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:483: in test_h02_correction_foreign_queries_use_identity
+    assert [task["id"] for task in listed.json()] == expected_ids
+E   assert [3] == [1, 2]
+E
+E     At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-ADMIN]" time="0.026">
+      <failure message="assert [3] == [1, 2]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:483: in test_h02_correction_foreign_queries_use_identity
+    assert [task["id"] for task in listed.json()] == expected_ids
+E   assert [3] == [1, 2]
+E
+E     At index 0 diff: #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Right contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-STUDENT]" time="0.028">
+      <failure message="assert [1, 2] == [3]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:483: in test_h02_correction_foreign_queries_use_identity
+    assert [task["id"] for task in listed.json()] == expected_ids
+E   assert [1, 2] == [3]
+E
+E     At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-TRAINER]" time="0.027">
+      <failure message="assert [1, 2] == [3]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:483: in test_h02_correction_foreign_queries_use_identity
+    assert [task["id"] for task in listed.json()] == expected_ids
+E   assert [1, 2] == [3]
+E
+E     At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-ADMIN]" time="0.026">
+      <failure message="assert [1, 2] == [3]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">tests\test_api.py:483: in test_h02_correction_foreign_queries_use_identity
+    assert [task["id"] for task in listed.json()] == expected_ids
+E   assert [1, 2] == [3]
+E
+E     At index 0 diff: #x1B[0m#x1B[94m1#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[94m3#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Left contains one more item: #x1B[0m#x1B[94m2#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Use -v to get more diff</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-STUDENT]" time="0.037">
+      <failure message="AssertionError: assert 'trainer' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:501: in test_h02_correction_foreign_creation_uses_identity
+    assert created.json()["owner"] == username
+E   AssertionError: assert 'trainer' == 'student'
+E
+E     #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-TRAINER]" time="0.033">
+      <failure message="AssertionError: assert 'trainer' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:501: in test_h02_correction_foreign_creation_uses_identity
+    assert created.json()["owner"] == username
+E   AssertionError: assert 'trainer' == 'student'
+E
+E     #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-ADMIN]" time="0.032">
+      <failure message="AssertionError: assert 'trainer' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:501: in test_h02_correction_foreign_creation_uses_identity
+    assert created.json()["owner"] == username
+E   AssertionError: assert 'trainer' == 'student'
+E
+E     #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-STUDENT]" time="0.036">
+      <failure message="AssertionError: assert 'student' == 'trainer'&#10;  &#10;  #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:501: in test_h02_correction_foreign_creation_uses_identity
+    assert created.json()["owner"] == username
+E   AssertionError: assert 'student' == 'trainer'
+E
+E     #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-TRAINER]" time="0.034">
+      <failure message="AssertionError: assert 'student' == 'trainer'&#10;  &#10;  #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:501: in test_h02_correction_foreign_creation_uses_identity
+    assert created.json()["owner"] == username
+E   AssertionError: assert 'student' == 'trainer'
+E
+E     #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-ADMIN]" time="0.035">
+      <failure message="AssertionError: assert 'student' == 'trainer'&#10;  &#10;  #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:501: in test_h02_correction_foreign_creation_uses_identity
+    assert created.json()["owner"] == username
+E   AssertionError: assert 'student' == 'trainer'
+E
+E     #x1B[0m#x1B[91m- trainer#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[None]" time="0.026">
+      <failure message="AssertionError: assert 'None' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ None#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:509: in test_h02_correction_ignores_untrusted_owner_values
+    assert response.json()["owner"] == "student"
+E   AssertionError: assert 'None' == 'student'
+E
+E     #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ None#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[42]" time="0.029">
+      <failure message="AssertionError: assert '42' == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ 42#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:509: in test_h02_correction_ignores_untrusted_owner_values
+    assert response.json()["owner"] == "student"
+E   AssertionError: assert '42' == 'student'
+E
+E     #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ 42#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[supplied_owner2]" time="0.033">
+      <failure message="assert &quot;['trainer']&quot; == 'student'&#10;  &#10;  #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ ['trainer']#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests\test_api.py:509: in test_h02_correction_ignores_untrusted_owner_values
+    assert response.json()["owner"] == "student"
+E   assert "['trainer']" == 'student'
+E
+E     #x1B[0m#x1B[91m- student#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ ['trainer']#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

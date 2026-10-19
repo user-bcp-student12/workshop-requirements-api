@@ -1,0 +1,482 @@
+diff --git a/PLAN.md b/PLAN.md
+index 43e1cc9..fe0b306 100644
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -70,0 +71,2 @@ H-04: "Files: uso directo de file.filename sin controles de nombre, extension o
++Politica confirmada por el usuario durante la implementacion el 2026-10-19: archivo 5 MiB, cuerpo multipart 6 MiB, bloques 64 KiB; extensiones .txt/.md/.pdf y nombres sin extension, admitiendo archivo vacio; 400 JSON detail generico para nombre/extension invalidos, 413 para ambos limites, 500 JSON generico para I/O; colisiones con sufijo unico sin sobrescritura. fileName conserva el nombre recibido y storedAt indica el destino real. Estos valores seran configurables; se autoriza actualizar exclusivamente el contrato de carga con esos cambios.
++
+diff --git a/app/main.py b/app/main.py
+index e5177ff..d1a36ce 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -14,0 +15 @@ from app.schemas import Identity, TaskInput
++from app.requirement_storage import UploadBodyLimitMiddleware, store_requirement, upload_policy_from_environment
+@@ -51,0 +53,3 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
++    upload_policy = upload_policy_from_environment()
++    app.state.upload_policy = upload_policy
++    app.add_middleware(UploadBodyLimitMiddleware, directory=selected_uploads, policy=upload_policy)
+@@ -78,4 +82,2 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        target = Path(selected_uploads) / str(file.filename)
+-        content = await file.read()
+-        target.write_bytes(content)
+-        return {"owner": identity.username, "fileName": file.filename, "storedAt": str(target), "size": len(content)}
++        response = await store_requirement(file, identity.username, selected_uploads, upload_policy)
++        return response.model_dump(by_alias=True)
+diff --git a/app/requirement_storage.py b/app/requirement_storage.py
+new file mode 100644
+index 0000000..7479172
+--- /dev/null
++++ b/app/requirement_storage.py
+@@ -0,0 +1,152 @@
++import os
++import unicodedata
++from http import HTTPStatus
++from pathlib import Path
++from tempfile import TemporaryFile
++from typing import BinaryIO
++from urllib.parse import unquote
++from uuid import uuid4
++
++from fastapi import HTTPException, UploadFile
++from starlette.concurrency import run_in_threadpool
++from starlette.responses import JSONResponse
++from starlette.types import ASGIApp, Message, Receive, Scope, Send
++
++from app.schemas import RequirementResponse, UploadPolicy
++
++INVALID_FILENAME = "Invalid filename"
++INVALID_EXTENSION = "File extension not allowed"
++UPLOAD_TOO_LARGE = "Upload too large"
++STORAGE_ERROR = "Requirement storage unavailable"
++MAX_COLLISION_ATTEMPTS = 16
++INVALID_NAME_CHARACTERS = frozenset('<>:"/\\|?*')
++RESERVED_NAMES = frozenset({"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"}) | frozenset(
++    f"{prefix}{number}" for prefix in ("COM", "LPT") for number in range(1, 10)
++)
++
++
++def upload_policy_from_environment() -> UploadPolicy:
++    values = {
++        field: os.environ[variable]
++        for field, variable in {
++            "max_file_bytes": "WORKSHOP_UPLOAD_MAX_FILE_BYTES",
++            "max_body_bytes": "WORKSHOP_UPLOAD_MAX_BODY_BYTES",
++            "chunk_bytes": "WORKSHOP_UPLOAD_CHUNK_BYTES",
++        }.items()
++        if variable in os.environ
++    }
++    if "WORKSHOP_UPLOAD_ALLOWED_EXTENSIONS" in os.environ:
++        values["allowed_extensions"] = frozenset(
++            extension.strip().casefold()
++            for extension in os.environ["WORKSHOP_UPLOAD_ALLOWED_EXTENSIONS"].split(",")
++            if extension.strip()
++        )
++    return UploadPolicy.model_validate(values)
++
++
++def safe_filename(filename: str | None, policy: UploadPolicy) -> str:
++    name = unicodedata.normalize("NFKC", unquote(filename or ""))
++    if (
++        not name or name in {".", ".."} or name.endswith((".", " "))
++        or any(character in INVALID_NAME_CHARACTERS or ord(character) < 32 or ord(character) == 127 for character in name)
++        or name.split(".", 1)[0].rstrip(" ").upper() in RESERVED_NAMES
++    ):
++        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=INVALID_FILENAME)
++    extension = Path(name).suffix.casefold()
++    if extension and extension not in policy.allowed_extensions:
++        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=INVALID_EXTENSION)
++    return name
++
++
++def exclusive_destination(directory: Path, name: str) -> tuple[Path, BinaryIO]:
++    root = directory.resolve(strict=True)
++    for attempt in range(MAX_COLLISION_ATTEMPTS):
++        candidate_name = name if attempt == 0 else f"{Path(name).stem}-{uuid4().hex}{Path(name).suffix}"
++        target = directory / candidate_name
++        if target.is_symlink() or target.is_junction() or target.resolve().parent != root:
++            raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=INVALID_FILENAME)
++        try:
++            return target, target.open("xb")
++        except FileExistsError:
++            continue
++    raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=STORAGE_ERROR)
++
++
++async def copy_limited(file: UploadFile, destination: BinaryIO, policy: UploadPolicy) -> int:
++    size = 0
++    while content := await file.read(policy.chunk_bytes):
++        size += len(content)
++        if size > policy.max_file_bytes:
++            raise HTTPException(status_code=HTTPStatus.REQUEST_ENTITY_TOO_LARGE, detail=UPLOAD_TOO_LARGE)
++        await run_in_threadpool(destination.write, content)
++    return size
++
++
++async def store_requirement(file: UploadFile, owner: str, directory: str, policy: UploadPolicy) -> RequirementResponse:
++    name = safe_filename(file.filename, policy)
++    target: Path | None = None
++    complete = False
++    try:
++        target, destination = exclusive_destination(Path(directory), name)
++        with destination:
++            size = await copy_limited(file, destination, policy)
++        response = RequirementResponse(owner=owner, file_name=file.filename or name, stored_at=str(target), size=size)
++        complete = True
++        return response
++    except OSError as error:
++        raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=STORAGE_ERROR) from error
++    finally:
++        if target is not None and not complete:
++            try:
++                target.unlink(missing_ok=True)
++            except OSError as error:
++                raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=STORAGE_ERROR) from error
++
++
++class UploadBodyLimitMiddleware:
++    def __init__(self, app: ASGIApp, directory: str, policy: UploadPolicy) -> None:
++        self.app = app
++        self.directory = directory
++        self.policy = policy
++
++    async def receive_body(self, receive: Receive, buffer: BinaryIO) -> int | None:
++        size = 0
++        while True:
++            message = await receive()
++            if message["type"] == "http.disconnect":
++                return None
++            content = message.get("body", b"")
++            size += len(content)
++            if size > self.policy.max_body_bytes:
++                raise HTTPException(status_code=HTTPStatus.REQUEST_ENTITY_TOO_LARGE, detail=UPLOAD_TOO_LARGE)
++            await run_in_threadpool(buffer.write, content)
++            if not message.get("more_body", False):
++                return size
++
++    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
++        if scope["type"] != "http" or scope["path"] != "/api/requirements" or scope["method"] != "POST":
++            await self.app(scope, receive, send)
++            return
++        try:
++            with TemporaryFile(mode="w+b", dir=self.directory) as buffer:
++                size = await self.receive_body(receive, buffer)
++                if size is None:
++                    return
++                await run_in_threadpool(buffer.seek, 0)
++                remaining = size
++                replayed = False
++
++                async def replay() -> Message:
++                    nonlocal remaining, replayed
++                    if replayed and remaining == 0:
++                        return await receive()
++                    content = await run_in_threadpool(buffer.read, self.policy.chunk_bytes)
++                    remaining -= len(content)
++                    replayed = True
++                    return {"type": "http.request", "body": content, "more_body": remaining > 0}
++
++                await self.app(scope, replay, send)
++        except HTTPException as error:
++            await JSONResponse({"detail": error.detail}, status_code=error.status_code)(scope, receive, send)
++        except OSError:
++            await JSONResponse({"detail": STORAGE_ERROR}, status_code=HTTPStatus.INTERNAL_SERVER_ERROR)(scope, receive, send)
+\ No newline at end of file
+diff --git a/app/schemas.py b/app/schemas.py
+index 054c9b7..a351164 100644
+--- a/app/schemas.py
++++ b/app/schemas.py
+@@ -4 +4 @@ from typing import Annotated, Any
+-from pydantic import BaseModel, Field, StrictInt, field_validator
++from pydantic import BaseModel, Field, StrictInt, field_validator, model_validator
+@@ -59 +59,31 @@ class SummaryResponse(BaseModel):
+-    high_priority_open: int = Field(default=0, serialization_alias="highPriorityOpen")
+\ No newline at end of file
++    high_priority_open: int = Field(default=0, serialization_alias="highPriorityOpen")
++
++
++KIBIBYTE = 1024
++MEBIBYTE = KIBIBYTE * KIBIBYTE
++DEFAULT_UPLOAD_FILE_BYTES = 5 * MEBIBYTE
++DEFAULT_UPLOAD_BODY_BYTES = 6 * MEBIBYTE
++DEFAULT_UPLOAD_CHUNK_BYTES = 64 * KIBIBYTE
++DEFAULT_UPLOAD_EXTENSIONS = frozenset({".txt", ".md", ".pdf"})
++
++
++class UploadPolicy(BaseModel):
++    max_file_bytes: int = Field(default=DEFAULT_UPLOAD_FILE_BYTES, gt=0)
++    max_body_bytes: int = Field(default=DEFAULT_UPLOAD_BODY_BYTES, gt=0)
++    chunk_bytes: int = Field(default=DEFAULT_UPLOAD_CHUNK_BYTES, gt=0)
++    allowed_extensions: frozenset[str] = DEFAULT_UPLOAD_EXTENSIONS
++
++    @model_validator(mode="after")
++    def consistent_limits(self) -> "UploadPolicy":
++        if not self.chunk_bytes <= self.max_file_bytes < self.max_body_bytes:
++            raise ValueError("Upload limits must satisfy chunk <= file < multipart body")
++        if any(not extension.startswith(".") or any(character in extension for character in "/\\:") for extension in self.allowed_extensions):
++            raise ValueError("Upload extensions must be simple suffixes starting with a dot")
++        return self
++
++
++class RequirementResponse(BaseModel):
++    owner: str
++    file_name: str = Field(serialization_alias="fileName")
++    stored_at: str = Field(serialization_alias="storedAt")
++    size: int
+\ No newline at end of file
+diff --git a/tests/test_api.py b/tests/test_api.py
+index ba2a2a7..3b7a07b 100644
+--- a/tests/test_api.py
++++ b/tests/test_api.py
+@@ -0,0 +1 @@
++import asyncio
+@@ -1,0 +3 @@ import base64
++import io
+@@ -2,0 +5 @@ import sqlite3
++import tempfile
+@@ -12 +15 @@ from types import SimpleNamespace
+-from unittest.mock import Mock
++from unittest.mock import AsyncMock, Mock
+@@ -18,0 +22 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa
++from fastapi import HTTPException, UploadFile
+@@ -638 +642 @@ def test_contract_upload_invalid_input(task_client: TestClient, input_case: str)
+-def test_contract_upload_io_errors_return_plain_500(
++def test_contract_upload_io_errors_return_generic_500(
+@@ -643 +647 @@ def test_contract_upload_io_errors_return_plain_500(
+-        (Path(task_client.app.state.upload_dir) / filename).mkdir()
++        monkeypatch.setattr(Path, "open", Mock(side_effect=OSError("Synthetic write failure")))
+@@ -651 +655,3 @@ def test_contract_upload_io_errors_return_plain_500(
+-    assert_plain_server_error(response)
++    assert response.status_code == 500
++    assert response.json() == {"detail": "Requirement storage unavailable"}
++    assert list(Path(task_client.app.state.upload_dir).iterdir()) == []
+@@ -862,0 +869,230 @@ def test_h03_connection_lock_is_per_application(task_client: TestClient, tmp_pat
++
++
++TEST_UPLOAD_FILE_BYTES = 128
++TEST_UPLOAD_BODY_BYTES = 1024
++TEST_UPLOAD_CHUNK_BYTES = 32
++
++
++@pytest.fixture
++def limited_upload_client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClient]:
++    monkeypatch.setenv("WORKSHOP_UPLOAD_MAX_FILE_BYTES", str(TEST_UPLOAD_FILE_BYTES))
++    monkeypatch.setenv("WORKSHOP_UPLOAD_MAX_BODY_BYTES", str(TEST_UPLOAD_BODY_BYTES))
++    monkeypatch.setenv("WORKSHOP_UPLOAD_CHUNK_BYTES", str(TEST_UPLOAD_CHUNK_BYTES))
++    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
++    app = create_app(str(tmp_path / "upload.db"), str(tmp_path / "uploads"))
++    with TestClient(app, raise_server_exceptions=False) as client:
++        yield client
++
++
++@pytest.mark.parametrize("filename", ["requirements.txt", "requirements.TXT", "requirements.md", "requirements.pdf", "requirements"])
++def test_h04_characterization_valid_upload(limited_upload_client: TestClient, filename: str) -> None:
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": (filename, b"Requirement")}
++    )
++    assert response.status_code == 201
++    target = Path(response.json()["storedAt"])
++    assert response.json() == {"owner": "student", "fileName": filename, "storedAt": str(target), "size": 11}
++    assert target == Path(limited_upload_client.app.state.upload_dir) / filename
++    assert target.read_bytes() == b"Requirement"
++
++
++@pytest.mark.parametrize("filename", ["../escape.txt", "..\\escape.txt", "nested/file.txt", "nested\\file.txt", ".", "..", "bad\x00.txt", "trailing.txt "])
++def test_h04_rejects_unsafe_names(limited_upload_client: TestClient, filename: str) -> None:
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": (filename, b"benign")}
++    )
++    assert response.status_code == 400
++    assert response.json() == {"detail": "Invalid filename"}
++    assert list(Path(limited_upload_client.app.state.upload_dir).iterdir()) == []
++
++
++def test_h04_rejects_absolute_name_inside_test_directory(limited_upload_client: TestClient, tmp_path: Path) -> None:
++    outside_uploads = tmp_path / "absolute.txt"
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": (outside_uploads.as_posix(), b"benign")}
++    )
++    assert response.status_code == 400
++    assert not outside_uploads.exists()
++
++
++@pytest.mark.parametrize("extension", [".exe", ".zip"])
++def test_h04_rejects_disallowed_extensions(limited_upload_client: TestClient, extension: str) -> None:
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("requirement" + extension, b"benign")}
++    )
++    assert response.status_code == 400
++    assert response.json() == {"detail": "File extension not allowed"}
++
++
++@pytest.mark.parametrize("link_method", ["is_symlink", "is_junction"])
++def test_h04_rejects_symbolic_destination(
++    limited_upload_client: TestClient, monkeypatch: pytest.MonkeyPatch, link_method: str
++) -> None:
++    original = getattr(Path, link_method)
++    monkeypatch.setattr(Path, link_method, lambda path: path.name == "link.txt" or original(path))
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("link.txt", b"benign")}
++    )
++    assert response.status_code == 400
++    assert response.json() == {"detail": "Invalid filename"}
++
++
++@pytest.mark.parametrize("size", [TEST_UPLOAD_FILE_BYTES, TEST_UPLOAD_FILE_BYTES + 1])
++def test_h04_file_limit_and_cleanup(limited_upload_client: TestClient, size: int) -> None:
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("limit.txt", b"x" * size)}
++    )
++    if size == TEST_UPLOAD_FILE_BYTES:
++        assert response.status_code == 201
++        assert response.json()["size"] == size
++        return
++    assert response.status_code == 413
++    assert response.json() == {"detail": "Upload too large"}
++    assert list(Path(limited_upload_client.app.state.upload_dir).iterdir()) == []
++
++
++def test_h04_collision_preserves_both_files(limited_upload_client: TestClient) -> None:
++    first = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("shared.txt", b"first")}
++    )
++    second = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("shared.txt", b"second")}
++    )
++    assert first.status_code == second.status_code == 201
++    assert first.json()["fileName"] == second.json()["fileName"] == "shared.txt"
++    assert first.json()["storedAt"] != second.json()["storedAt"]
++    assert Path(first.json()["storedAt"]).read_bytes() == b"first"
++    assert Path(second.json()["storedAt"]).read_bytes() == b"second"
++
++
++def test_h04_reads_bounded_blocks(limited_upload_client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
++    sizes = []
++    original = StarletteUploadFile.read
++
++    async def observed_read(file: StarletteUploadFile, size: int = -1) -> bytes:
++        sizes.append(size)
++        return await original(file, size)
++
++    monkeypatch.setattr(StarletteUploadFile, "read", observed_read)
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("blocks.txt", b"x" * (TEST_UPLOAD_FILE_BYTES // 2))}
++    )
++    assert response.status_code == 201
++    assert sizes and all(size == TEST_UPLOAD_CHUNK_BYTES for size in sizes)
++
++
++@pytest.mark.parametrize("false_length", [False, True])
++def test_h04_body_limit_precedes_parser(
++    limited_upload_client: TestClient, monkeypatch: pytest.MonkeyPatch, false_length: bool
++) -> None:
++    original = StarletteUploadFile.__init__
++    calls = Mock()
++
++    def observed_init(upload: StarletteUploadFile, *arguments: object, **options: object) -> None:
++        calls()
++        original(upload, *arguments, **options)
++
++    monkeypatch.setattr(StarletteUploadFile, "__init__", observed_init)
++    request_headers = headers()
++    if false_length:
++        request_headers["Content-Length"] = "1"
++    response = limited_upload_client.post(
++        "/api/requirements", headers=request_headers,
++        files={"file": ("body.txt", b"x" * (TEST_UPLOAD_BODY_BYTES + 1))},
++    )
++    assert response.status_code == 413
++    assert response.json() == {"detail": "Upload too large"}
++    calls.assert_not_called()
++    assert list(Path(limited_upload_client.app.state.upload_dir).iterdir()) == []
++
++
++@pytest.mark.parametrize("filename", [None, "", "CON.txt", "CON .txt", "CONIN$", "CONOUT$.txt", "LPT1.txt", "file:stream.txt", "..%2fescape.txt"])
++def test_h04_rejects_reserved_or_encoded_names(filename: str | None) -> None:
++    from app.requirement_storage import safe_filename
++    from app.schemas import UploadPolicy
++
++    with pytest.raises(HTTPException) as error:
++        safe_filename(filename, UploadPolicy())
++    assert error.value.status_code == 400
++    assert error.value.detail == "Invalid filename"
++
++
++def test_h04_cancellation_removes_partial_file(limited_upload_client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
++    from app.requirement_storage import store_requirement
++
++    upload = UploadFile(file=io.BytesIO(b"partial"), filename="cancel.txt")
++    monkeypatch.setattr(upload, "read", AsyncMock(side_effect=[b"partial", asyncio.CancelledError()]))
++    try:
++        with pytest.raises(asyncio.CancelledError):
++            asyncio.run(store_requirement(
++                upload, "student", limited_upload_client.app.state.upload_dir, limited_upload_client.app.state.upload_policy
++            ))
++        assert list(Path(limited_upload_client.app.state.upload_dir).iterdir()) == []
++    finally:
++        asyncio.run(upload.close())
++
++
++def test_h04_collision_exhaustion_is_generic(limited_upload_client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setattr(Path, "open", Mock(side_effect=FileExistsError("Synthetic collision")))
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("collision.txt", b"Requirement")}
++    )
++    assert response.status_code == 500
++    assert response.json() == {"detail": "Requirement storage unavailable"}
++
++
++def test_h04_spooling_failure_is_generic(limited_upload_client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setattr("app.requirement_storage.TemporaryFile", Mock(side_effect=OSError("Synthetic spool failure")))
++    response = limited_upload_client.post(
++        "/api/requirements", headers=headers(), files={"file": ("spool.txt", b"Requirement")}
++    )
++    assert response.status_code == 500
++    assert response.json() == {"detail": "Requirement storage unavailable"}
++
++
++@pytest.mark.parametrize("disconnect", [False, True])
++def test_h04_body_limit_exact_and_disconnect(limited_upload_client: TestClient, disconnect: bool) -> None:
++    from app.requirement_storage import UploadBodyLimitMiddleware
++
++    policy = limited_upload_client.app.state.upload_policy
++    messages = [
++        {"type": "http.request", "body": b"x" * (policy.max_body_bytes // 2), "more_body": True},
++        {"type": "http.request", "body": b"x" * (policy.max_body_bytes // 2), "more_body": False},
++        {"type": "http.disconnect"},
++    ]
++    if disconnect:
++        messages = [messages[0], {"type": "http.disconnect"}]
++    receive = AsyncMock(side_effect=messages)
++    send = AsyncMock()
++    consumed = bytearray()
++
++    async def application(scope, replay, output) -> None:
++        while True:
++            message = await replay()
++            consumed.extend(message["body"])
++            if not message["more_body"]:
++                break
++        assert (await replay())["type"] == "http.disconnect"
++
++    middleware = UploadBodyLimitMiddleware(application, limited_upload_client.app.state.upload_dir, policy)
++    asyncio.run(middleware({"type": "http", "method": "POST", "path": "/api/requirements"}, receive, send))
++    assert len(consumed) == (0 if disconnect else policy.max_body_bytes)
++    assert list(Path(limited_upload_client.app.state.upload_dir).iterdir()) == []
++
++
++def test_h04_custom_extensions_and_invalid_policy(monkeypatch: pytest.MonkeyPatch) -> None:
++    from app.requirement_storage import upload_policy_from_environment
++    from pydantic import ValidationError
++
++    monkeypatch.setenv("WORKSHOP_UPLOAD_ALLOWED_EXTENSIONS", " .CSV, .TXT ")
++    assert upload_policy_from_environment().allowed_extensions == {".csv", ".txt"}
++    monkeypatch.setenv("WORKSHOP_UPLOAD_MAX_FILE_BYTES", "0")
++    with pytest.raises(ValidationError):
++        upload_policy_from_environment()
++    monkeypatch.setenv("WORKSHOP_UPLOAD_MAX_FILE_BYTES", "999999999")
++    with pytest.raises(ValidationError):
++        upload_policy_from_environment()
++    monkeypatch.delenv("WORKSHOP_UPLOAD_MAX_FILE_BYTES")
++    monkeypatch.setenv("WORKSHOP_UPLOAD_ALLOWED_EXTENSIONS", "txt,.bad/path")
++    with pytest.raises(ValidationError):
++        upload_policy_from_environment()

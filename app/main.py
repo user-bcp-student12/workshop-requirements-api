@@ -1,29 +1,31 @@
 from __future__ import annotations
 
-import base64
 import os
 import sqlite3
-import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from threading import RLock
+from typing import Any, TypeVar
 
 import urllib3
-from fastapi import Body, Depends, FastAPI, File, Header, HTTPException, Query, UploadFile
+from fastapi import Body, Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-LEGACY_SECRET = "WORKSHOP_SECRET_2026"
+from app.schemas import Identity, TaskInput
+from app.requirement_storage import UploadBodyLimitMiddleware, store_requirement, upload_policy_from_environment
+from app.security import verified_identity
+from app.task_repository import TaskRepository
+from app.task_service import TaskService
+
+TASK_STORAGE_ERROR = "Task storage unavailable"
+TaskResult = TypeVar("TaskResult")
 
 
-def legacy_identity(authorization: str = Header(default="")) -> dict[str, str]:
+def execute_task_operation(operation: Callable[[], TaskResult]) -> TaskResult:
     try:
-        token = authorization.replace("Bearer ", "")
-        decoded = base64.b64decode(token).decode("utf-8")
-        parts = decoded.split("|")
-        if len(parts) != 4 or parts[3] != LEGACY_SECRET or int(parts[2]) < int(time.time()):
-            raise ValueError("invalid token")
-        return {"username": parts[0], "role": parts[1]}
-    except Exception as error:
-        raise HTTPException(status_code=401, detail="Invalid token: " + str(error)) from error
+        return operation()
+    except sqlite3.Error as error:
+        raise HTTPException(status_code=500, detail=TASK_STORAGE_ERROR) from error
 
 
 def create_app(db_path: str | None = None, upload_dir: str | None = None) -> FastAPI:
@@ -45,6 +47,12 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
     app = FastAPI(title="Workshop Requirements API", version="0.1.0")
     app.state.connection = connection
     app.state.upload_dir = selected_uploads
+    connection_lock = RLock()
+    app.state.connection_lock = connection_lock
+    task_service = TaskService(TaskRepository(connection, connection_lock))
+    upload_policy = upload_policy_from_environment()
+    app.state.upload_policy = upload_policy
+    app.add_middleware(UploadBodyLimitMiddleware, directory=selected_uploads, policy=upload_policy)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -53,72 +61,35 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
         allow_headers=["*"],
     )
 
-    def as_task(row: sqlite3.Row) -> dict[str, Any]:
-        return {
-            "id": row["id"],
-            "title": row["title"],
-            "description": row["description"],
-            "status": row["status"],
-            "owner": row["owner"],
-            "priority": row["priority"],
-            "createdAt": row["created_at"],
-        }
-
     @app.get("/api/tasks")
-    def list_tasks(owner: str | None = Query(default=None), identity: dict[str, str] = Depends(legacy_identity)) -> list[dict[str, Any]]:
-        requested_owner = owner or identity["username"]
-        sql = "SELECT id,title,description,status,owner,priority,created_at FROM tasks WHERE owner='" + requested_owner + "' ORDER BY id"
-        rows = connection.execute(sql).fetchall()
-        result: list[dict[str, Any]] = []
-        for row in rows:
-            result.append(as_task(row))
-        return result
+    def list_tasks(owner: str | None = Query(default=None), identity: Identity = Depends(verified_identity)) -> list[dict[str, Any]]:
+        tasks = execute_task_operation(lambda: task_service.list_tasks(identity))
+        return [task.model_dump(by_alias=True) for task in tasks]
 
     @app.post("/api/tasks", status_code=201)
-    def create_task(payload: dict[str, Any] = Body(...), identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
-        title = str(payload.get("title", ""))
-        description = str(payload.get("description", ""))
-        status = str(payload.get("status", "TODO"))
-        priority = str(payload.get("priority", "MEDIUM"))
-        owner = str(payload.get("owner", identity["username"]))
-        sql = "INSERT INTO tasks(title,description,status,owner,priority,created_at) VALUES ('" + title + "','" + description + "','" + status + "','" + owner + "','" + priority + "',datetime('now'))"
-        cursor = connection.execute(sql)
-        connection.commit()
-        row = connection.execute("SELECT id,title,description,status,owner,priority,created_at FROM tasks WHERE id=" + str(cursor.lastrowid)).fetchone()
-        return as_task(row)
+    def create_task(payload: dict[str, Any] = Body(...), identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
+        task_input = TaskInput.from_payload(payload, identity.username)
+        task = execute_task_operation(lambda: task_service.create_task(task_input, identity))
+        return task.model_dump(by_alias=True)
 
     @app.get("/api/summary")
-    def summary(owner: str | None = Query(default=None), identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
-        requested_owner = owner or identity["username"]
-        rows = connection.execute("SELECT status,priority FROM tasks WHERE owner='" + requested_owner + "'").fetchall()
-        response: dict[str, Any] = {"owner": requested_owner, "total": 0, "byStatus": {}, "highPriorityOpen": 0}
-        for row in rows:
-            response["total"] = response["total"] + 1
-            if row["status"] in response["byStatus"]:
-                response["byStatus"][row["status"]] = response["byStatus"][row["status"]] + 1
-            else:
-                response["byStatus"][row["status"]] = 1
-            if row["priority"] == "HIGH":
-                if row["status"] != "DONE":
-                    if row["status"] != "ARCHIVED":
-                        response["highPriorityOpen"] = response["highPriorityOpen"] + 1
-        return response
+    def summary(owner: str | None = Query(default=None), identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
+        response = execute_task_operation(lambda: task_service.summary(identity))
+        return response.model_dump(by_alias=True)
 
     @app.post("/api/requirements", status_code=201)
-    async def upload_requirement(file: UploadFile = File(...), identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
-        target = Path(selected_uploads) / str(file.filename)
-        content = await file.read()
-        target.write_bytes(content)
-        return {"owner": identity["username"], "fileName": file.filename, "storedAt": str(target), "size": len(content)}
+    async def upload_requirement(file: UploadFile = File(...), identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
+        response = await store_requirement(file, identity.username, selected_uploads, upload_policy)
+        return response.model_dump(by_alias=True)
 
     @app.get("/api/backend-health")
-    def backend_health(identity: dict[str, str] = Depends(legacy_identity)) -> dict[str, Any]:
+    def backend_health(identity: Identity = Depends(verified_identity)) -> dict[str, Any]:
         url = os.getenv("AUTH_HEALTH_URL", "http://localhost:8080/q/health")
         try:
             response = urllib3.PoolManager().request("GET", url, timeout=3.0)
-            return {"requestedBy": identity["username"], "status": response.status, "body": response.data.decode("utf-8")}
+            return {"requestedBy": identity.username, "status": response.status, "body": response.data.decode("utf-8")}
         except Exception as error:
-            return {"requestedBy": identity["username"], "status": 0, "body": str(error)}
+            return {"requestedBy": identity.username, "status": 0, "body": str(error)}
 
     @app.on_event("shutdown")
     def close_connection() -> None:

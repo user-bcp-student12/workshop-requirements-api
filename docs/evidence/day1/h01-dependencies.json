@@ -1,0 +1,25 @@
+{
+  "description": "Public package/version summary; original pip environment and metadata omitted.",
+  "packages": [
+    {
+      "name": "PyJWT",
+      "version": "2.15.1",
+      "download_url": "https://files.pythonhosted.org/packages/50/ca/44de4e75f8aadc457f0634be3b542815078ded46dca30efb960edeecad6e/pyjwt-2.15.1-py3-none-any.whl"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2",
+      "download_url": "https://files.pythonhosted.org/packages/9a/4f/adfc442765721292fff86d314ce385d3249d22db42295c0dd057727b60f3/cryptography-50.0.2-cp311-abi3-win_amd64.whl"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "download_url": "https://files.pythonhosted.org/packages/60/a6/8b149b2c3f2e11aaa1618ef64500b45f50f22c57a977a4dff1aff1f91042/cffi-2.1.1-cp313-cp313-win_amd64.whl"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.11",
+      "download_url": "https://files.pythonhosted.org/packages/90/11/0e6f11117525ff0eec40ebac3d313376f102df93ca44ad9e893ee85e4f89/pycparser-3.11-py3-none-any.whl"
+    }
+  ]
+}

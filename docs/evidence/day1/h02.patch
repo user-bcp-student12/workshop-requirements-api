@@ -1,0 +1,52 @@
+diff --git a/app/main.py b/app/main.py
+index 7c27fa3..59a0910 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -16 +16 @@ from app.task_repository import TaskRepository
+-from app.task_service import TaskService, select_owner
++from app.task_service import TaskService
+@@ -59,2 +59 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        requested_owner = select_owner(owner, identity.username)
+-        tasks = execute_task_operation(lambda: task_service.list_tasks(requested_owner))
++        tasks = execute_task_operation(lambda: task_service.list_tasks(identity))
+@@ -66 +65 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        task = execute_task_operation(lambda: task_service.create_task(task_input))
++        task = execute_task_operation(lambda: task_service.create_task(task_input, identity))
+@@ -71,2 +70 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        requested_owner = select_owner(owner, identity.username)
+-        response = execute_task_operation(lambda: task_service.summary(requested_owner))
++        response = execute_task_operation(lambda: task_service.summary(identity))
+diff --git a/app/schemas.py b/app/schemas.py
+index 0d35f4a..0eea643 100644
+--- a/app/schemas.py
++++ b/app/schemas.py
+@@ -41 +41 @@ class TaskInput(BaseModel):
+-            owner=str(payload.get("owner", default_owner)),
++            owner=default_owner,
+diff --git a/app/task_service.py b/app/task_service.py
+index e122168..36a5b57 100644
+--- a/app/task_service.py
++++ b/app/task_service.py
+@@ -3 +3 @@ import sqlite3
+-from app.schemas import SummaryResponse, TaskInput, TaskResponse
++from app.schemas import Identity, SummaryResponse, TaskInput, TaskResponse
+@@ -10,2 +10,2 @@ CLOSED_TASK_STATUSES = frozenset({"DONE", "ARCHIVED"})
+-def select_owner(owner: str | None, username: str) -> str:
+-    return owner or username
++def select_owner(identity: Identity) -> str:
++    return identity.username
+@@ -22,2 +22,2 @@ class TaskService:
+-    def list_tasks(self, owner: str) -> list[TaskResponse]:
+-        return [task_from_row(row) for row in self.repository.list_tasks(owner)]
++    def list_tasks(self, identity: Identity) -> list[TaskResponse]:
++        return [task_from_row(row) for row in self.repository.list_tasks(select_owner(identity))]
+@@ -25,2 +25,3 @@ class TaskService:
+-    def create_task(self, task: TaskInput) -> TaskResponse:
+-        return task_from_row(self.repository.create_task(task))
++    def create_task(self, task: TaskInput, identity: Identity) -> TaskResponse:
++        owned_task = task.model_copy(update={"owner": select_owner(identity)})
++        return task_from_row(self.repository.create_task(owned_task))
+@@ -28 +29,2 @@ class TaskService:
+-    def summary(self, owner: str) -> SummaryResponse:
++    def summary(self, identity: Identity) -> SummaryResponse:
++        owner = select_owner(identity)

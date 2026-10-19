@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="0" skipped="0" tests="30" time="1.519" timestamp="2026-10-19T16:08:54.136714-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_h01_characterization_authenticated_routes[case0]" time="0.051" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_authenticated_routes[case1]" time="0.037" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_authenticated_routes[case2]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_authenticated_routes[case3]" time="0.061" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_authenticated_routes[case4]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[missing-case0]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[missing-case1]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[missing-case2]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[missing-case3]" time="0.033" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[missing-case4]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[malformed-case0]" time="0.033" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[malformed-case1]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[malformed-case2]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[malformed-case3]" time="0.033" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[malformed-case4]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[expired-case0]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[expired-case1]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[expired-case2]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[expired-case3]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_h01_characterization_rejects_invalid_credentials[expired-case4]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[omitted-student-expected_ids0]" time="0.026" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[omitted-trainer-expected_ids1]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[empty-student-expected_ids0]" time="0.044" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[empty-trainer-expected_ids1]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[self-student-expected_ids0]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[self-trainer-expected_ids1]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[False-student]" time="0.039" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[False-trainer]" time="0.035" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[True-student]" time="0.032" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[True-trainer]" time="0.034" />
+  </testsuite>
+</testsuites>

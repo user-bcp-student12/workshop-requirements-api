@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="3" skipped="0" tests="9" time="0.786" timestamp="2026-10-19T17:58:33.705671-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[None]" time="0.015" />
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[]" time="0.001" />
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[CON.txt]" time="0.001" />
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[CON .txt]" time="0.001">
+      <failure message="Failed: DID NOT RAISE &lt;class 'fastapi.exceptions.HTTPException'&gt;">tests\test_api.py:1014: in test_h04_rejects_reserved_or_encoded_names
+    with pytest.raises(HTTPException) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'fastapi.exceptions.HTTPException'&gt;</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[CONIN$]" time="0.001">
+      <failure message="Failed: DID NOT RAISE &lt;class 'fastapi.exceptions.HTTPException'&gt;">tests\test_api.py:1014: in test_h04_rejects_reserved_or_encoded_names
+    with pytest.raises(HTTPException) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'fastapi.exceptions.HTTPException'&gt;</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[CONOUT$.txt]" time="0.001">
+      <failure message="Failed: DID NOT RAISE &lt;class 'fastapi.exceptions.HTTPException'&gt;">tests\test_api.py:1014: in test_h04_rejects_reserved_or_encoded_names
+    with pytest.raises(HTTPException) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'fastapi.exceptions.HTTPException'&gt;</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[LPT1.txt]" time="0.001" />
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[file:stream.txt]" time="0.001" />
+    <testcase classname="tests.test_api" name="test_h04_rejects_reserved_or_encoded_names[..%2fescape.txt]" time="0.001" />
+  </testsuite>
+</testsuites>

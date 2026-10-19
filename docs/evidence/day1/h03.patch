@@ -1,0 +1,380 @@
+diff --git a/app/main.py b/app/main.py
+index 08cfbae..7b96185 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -6,0 +7 @@ import time
++from collections.abc import Callable
+@@ -8 +9 @@ from pathlib import Path
+-from typing import Any
++from typing import Any, TypeVar
+@@ -13,0 +15,4 @@ from fastapi.middleware.cors import CORSMiddleware
++from app.schemas import TaskInput
++from app.task_repository import TaskRepository
++from app.task_service import TaskService, select_owner
++
+@@ -14,0 +20,9 @@ LEGACY_SECRET = "WORKSHOP_SECRET_2026"
++TASK_STORAGE_ERROR = "Task storage unavailable"
++TaskResult = TypeVar("TaskResult")
++
++
++def execute_task_operation(operation: Callable[[], TaskResult]) -> TaskResult:
++    try:
++        return operation()
++    except sqlite3.Error as error:
++        raise HTTPException(status_code=500, detail=TASK_STORAGE_ERROR) from error
+@@ -47,0 +62 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
++    task_service = TaskService(TaskRepository(connection))
+@@ -56,11 +70,0 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-    def as_task(row: sqlite3.Row) -> dict[str, Any]:
+-        return {
+-            "id": row["id"],
+-            "title": row["title"],
+-            "description": row["description"],
+-            "status": row["status"],
+-            "owner": row["owner"],
+-            "priority": row["priority"],
+-            "createdAt": row["created_at"],
+-        }
+-
+@@ -69,7 +73,3 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        requested_owner = owner or identity["username"]
+-        sql = "SELECT id,title,description,status,owner,priority,created_at FROM tasks WHERE owner='" + requested_owner + "' ORDER BY id"
+-        rows = connection.execute(sql).fetchall()
+-        result: list[dict[str, Any]] = []
+-        for row in rows:
+-            result.append(as_task(row))
+-        return result
++        requested_owner = select_owner(owner, identity["username"])
++        tasks = execute_task_operation(lambda: task_service.list_tasks(requested_owner))
++        return [task.model_dump(by_alias=True) for task in tasks]
+@@ -79,10 +79,3 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        title = str(payload.get("title", ""))
+-        description = str(payload.get("description", ""))
+-        status = str(payload.get("status", "TODO"))
+-        priority = str(payload.get("priority", "MEDIUM"))
+-        owner = str(payload.get("owner", identity["username"]))
+-        sql = "INSERT INTO tasks(title,description,status,owner,priority,created_at) VALUES ('" + title + "','" + description + "','" + status + "','" + owner + "','" + priority + "',datetime('now'))"
+-        cursor = connection.execute(sql)
+-        connection.commit()
+-        row = connection.execute("SELECT id,title,description,status,owner,priority,created_at FROM tasks WHERE id=" + str(cursor.lastrowid)).fetchone()
+-        return as_task(row)
++        task_input = TaskInput.from_payload(payload, identity["username"])
++        task = execute_task_operation(lambda: task_service.create_task(task_input))
++        return task.model_dump(by_alias=True)
+@@ -92,14 +85,3 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-        requested_owner = owner or identity["username"]
+-        rows = connection.execute("SELECT status,priority FROM tasks WHERE owner='" + requested_owner + "'").fetchall()
+-        response: dict[str, Any] = {"owner": requested_owner, "total": 0, "byStatus": {}, "highPriorityOpen": 0}
+-        for row in rows:
+-            response["total"] = response["total"] + 1
+-            if row["status"] in response["byStatus"]:
+-                response["byStatus"][row["status"]] = response["byStatus"][row["status"]] + 1
+-            else:
+-                response["byStatus"][row["status"]] = 1
+-            if row["priority"] == "HIGH":
+-                if row["status"] != "DONE":
+-                    if row["status"] != "ARCHIVED":
+-                        response["highPriorityOpen"] = response["highPriorityOpen"] + 1
+-        return response
++        requested_owner = select_owner(owner, identity["username"])
++        response = execute_task_operation(lambda: task_service.summary(requested_owner))
++        return response.model_dump(by_alias=True)
+diff --git a/app/schemas.py b/app/schemas.py
+new file mode 100644
+index 0000000..0242753
+--- /dev/null
++++ b/app/schemas.py
+@@ -0,0 +1,42 @@
++from collections.abc import Mapping
++from typing import Any
++
++from pydantic import BaseModel, Field
++
++DEFAULT_TASK_STATUS = "TODO"
++DEFAULT_TASK_PRIORITY = "MEDIUM"
++
++
++class TaskInput(BaseModel):
++    title: str = ""
++    description: str = ""
++    status: str = DEFAULT_TASK_STATUS
++    priority: str = DEFAULT_TASK_PRIORITY
++    owner: str
++
++    @classmethod
++    def from_payload(cls, payload: Mapping[str, Any], default_owner: str) -> "TaskInput":
++        return cls(
++            title=str(payload.get("title", "")),
++            description=str(payload.get("description", "")),
++            status=str(payload.get("status", DEFAULT_TASK_STATUS)),
++            priority=str(payload.get("priority", DEFAULT_TASK_PRIORITY)),
++            owner=str(payload.get("owner", default_owner)),
++        )
++
++
++class TaskResponse(BaseModel):
++    id: int
++    title: str
++    description: str
++    status: str
++    owner: str
++    priority: str
++    created_at: str = Field(serialization_alias="createdAt")
++
++
++class SummaryResponse(BaseModel):
++    owner: str
++    total: int = 0
++    by_status: dict[str, int] = Field(default_factory=dict, serialization_alias="byStatus")
++    high_priority_open: int = Field(default=0, serialization_alias="highPriorityOpen")
+\ No newline at end of file
+diff --git a/app/task_repository.py b/app/task_repository.py
+new file mode 100644
+index 0000000..c35381e
+--- /dev/null
++++ b/app/task_repository.py
+@@ -0,0 +1,41 @@
++import sqlite3
++
++from app.schemas import TaskInput
++
++TASK_SELECT = "SELECT id,title,description,status,owner,priority,created_at FROM tasks"
++LIST_TASKS_SQL = TASK_SELECT + " WHERE owner = ? ORDER BY id"
++GET_TASK_SQL = TASK_SELECT + " WHERE id = ?"
++SUMMARY_ROWS_SQL = "SELECT status,priority FROM tasks WHERE owner = ?"
++INSERT_TASK_SQL = (
++    "INSERT INTO tasks(title,description,status,owner,priority,created_at) "
++    "VALUES (?, ?, ?, ?, ?, datetime('now'))"
++)
++MISSING_INSERTED_TASK = "Inserted task could not be retrieved"
++
++
++class TaskRepository:
++    def __init__(self, connection: sqlite3.Connection) -> None:
++        self.connection = connection
++
++    def list_tasks(self, owner: str) -> list[sqlite3.Row]:
++        return self.connection.execute(LIST_TASKS_SQL, (owner,)).fetchall()
++
++    def get_task(self, task_id: int) -> sqlite3.Row | None:
++        return self.connection.execute(GET_TASK_SQL, (task_id,)).fetchone()
++
++    def summary_rows(self, owner: str) -> list[sqlite3.Row]:
++        return self.connection.execute(SUMMARY_ROWS_SQL, (owner,)).fetchall()
++
++    def create_task(self, task: TaskInput) -> sqlite3.Row:
++        try:
++            cursor = self.connection.execute(
++                INSERT_TASK_SQL, (task.title, task.description, task.status, task.owner, task.priority)
++            )
++            row = self.get_task(cursor.lastrowid)
++            if row is None:
++                raise sqlite3.DatabaseError(MISSING_INSERTED_TASK)
++            self.connection.commit()
++            return row
++        except sqlite3.Error:
++            self.connection.rollback()
++            raise
+\ No newline at end of file
+diff --git a/app/task_service.py b/app/task_service.py
+new file mode 100644
+index 0000000..3d0548d
+--- /dev/null
++++ b/app/task_service.py
+@@ -0,0 +1,36 @@
++import sqlite3
++
++from app.schemas import SummaryResponse, TaskInput, TaskResponse
++from app.task_repository import TaskRepository
++
++HIGH_PRIORITY = "HIGH"
++CLOSED_TASK_STATUSES = frozenset({"DONE", "ARCHIVED"})
++
++
++def select_owner(owner: str | None, username: str) -> str:
++    return owner or username
++
++
++def task_from_row(row: sqlite3.Row) -> TaskResponse:
++    return TaskResponse.model_validate(dict(row))
++
++
++class TaskService:
++    def __init__(self, repository: TaskRepository) -> None:
++        self.repository = repository
++
++    def list_tasks(self, owner: str) -> list[TaskResponse]:
++        return [task_from_row(row) for row in self.repository.list_tasks(owner)]
++
++    def create_task(self, task: TaskInput) -> TaskResponse:
++        return task_from_row(self.repository.create_task(task))
++
++    def summary(self, owner: str) -> SummaryResponse:
++        rows = self.repository.summary_rows(owner)
++        response = SummaryResponse(owner=owner, total=len(rows))
++        for row in rows:
++            status = row["status"]
++            response.by_status[status] = response.by_status.get(status, 0) + 1
++            if row["priority"] == HIGH_PRIORITY and status not in CLOSED_TASK_STATUSES:
++                response.high_priority_open += 1
++        return response
+\ No newline at end of file
+diff --git a/tests/test_api.py b/tests/test_api.py
+index 7d69f29..1f4aeb4 100644
+--- a/tests/test_api.py
++++ b/tests/test_api.py
+@@ -2,0 +3,2 @@ import time
++from collections.abc import Iterator
++from datetime import datetime
+@@ -4,0 +7 @@ from pathlib import Path
++import pytest
+@@ -58,0 +62,149 @@ def test_rejects_invalid_token(tmp_path: Path) -> None:
++
++
++@pytest.fixture
++def task_client(tmp_path: Path) -> Iterator[TestClient]:
++    app = create_app(str(tmp_path / "workshop.db"), str(tmp_path / "uploads"))
++    with TestClient(app, raise_server_exceptions=False) as client:
++        yield client
++
++
++@pytest.mark.parametrize("owner", [None, "", "student"])
++def test_h03_characterization_lists_in_order(task_client: TestClient, owner: str | None) -> None:
++    params = {} if owner is None else {"owner": owner}
++    response = task_client.get("/api/tasks", headers=headers(), params=params)
++    assert response.status_code == 200
++    tasks = response.json()
++    assert [task["id"] for task in tasks] == [1, 2]
++    assert [task["owner"] for task in tasks] == ["student", "student"]
++    assert tasks[0]["title"] == "Refactor login"
++    assert tasks[1]["title"] == "Review API"
++    for task in tasks:
++        assert set(task) == {"id", "title", "description", "status", "owner", "priority", "createdAt"}
++        assert isinstance(task["id"], int)
++        assert all(isinstance(value, str) for key, value in task.items() if key != "id")
++        datetime.strptime(task["createdAt"], "%Y-%m-%d %H:%M:%S")
++
++
++@pytest.mark.parametrize(
++    ("payload", "expected"),
++    [
++        ({}, {"title": "", "description": "", "status": "TODO", "priority": "MEDIUM", "owner": "student"}),
++        (
++            {"title": 42, "description": None, "status": False, "priority": [1, 2], "unknown": "ignored"},
++            {"title": "42", "description": "None", "status": "False", "priority": "[1, 2]", "owner": "student"},
++        ),
++        (
++            {"title": "Custom", "description": "Details", "status": "CUSTOM", "priority": "LOW", "owner": "student"},
++            {"title": "Custom", "description": "Details", "status": "CUSTOM", "priority": "LOW", "owner": "student"},
++        ),
++    ],
++)
++def test_h03_characterization_creates_and_persists(
++    task_client: TestClient, payload: dict, expected: dict[str, str]
++) -> None:
++    response = task_client.post("/api/tasks", headers=headers(), json=payload)
++    assert response.status_code == 201
++    created = response.json()
++    assert created["id"] == 4
++    assert {key: created[key] for key in expected} == expected
++    assert set(created) == {"id", "title", "description", "status", "owner", "priority", "createdAt"}
++    datetime.strptime(created["createdAt"], "%Y-%m-%d %H:%M:%S")
++    listed = task_client.get("/api/tasks", headers=headers())
++    assert listed.status_code == 200
++    assert listed.json()[-1] == created
++
++
++def test_h03_characterization_summary_states(task_client: TestClient) -> None:
++    for status, priority in [
++        ("TODO", "HIGH"), ("IN_PROGRESS", "HIGH"), ("DONE", "HIGH"),
++        ("ARCHIVED", "HIGH"), ("CUSTOM", "LOW"), ("DONE", "MEDIUM"),
++    ]:
++        response = task_client.post(
++            "/api/tasks", headers=headers(), json={"title": status, "status": status, "priority": priority}
++        )
++        assert response.status_code == 201
++    response = task_client.get("/api/summary", headers=headers())
++    assert response.status_code == 200
++    assert response.json() == {
++        "owner": "student", "total": 8,
++        "byStatus": {"TODO": 2, "IN_PROGRESS": 2, "DONE": 2, "ARCHIVED": 1, "CUSTOM": 1},
++        "highPriorityOpen": 3,
++    }
++
++
++def test_h03_characterization_empty_owner(task_client: TestClient) -> None:
++    response = task_client.get("/api/tasks", headers=headers("unseeded"))
++    assert response.status_code == 200
++    assert response.json() == []
++    response = task_client.get("/api/summary", headers=headers("unseeded"))
++    assert response.status_code == 200
++    assert response.json() == {"owner": "unseeded", "total": 0, "byStatus": {}, "highPriorityOpen": 0}
++
++
++@pytest.mark.parametrize("payload", [None, [], "not an object"])
++def test_h03_characterization_requires_object(task_client: TestClient, payload: object) -> None:
++    response = task_client.post("/api/tasks", headers=headers(), json=payload)
++    assert response.status_code == 422
++    assert isinstance(response.json()["detail"], list)
++
++
++@pytest.mark.parametrize(
++    ("title", "description"),
++    [("Trainer's notes", "Student's requirements"), ('Quoted "title"', "Revisi\u00f3n \u65e5\u672c\u8a9e")],
++)
++def test_h03_correction_preserves_literal_text(task_client: TestClient, title: str, description: str) -> None:
++    response = task_client.post(
++        "/api/tasks", headers=headers(), json={"title": title, "description": description}
++    )
++    assert response.status_code == 201
++    assert response.json()["title"] == title
++    assert response.json()["description"] == description
++    listed = task_client.get("/api/tasks", headers=headers())
++    assert listed.status_code == 200
++    assert len(listed.json()) == 3
++    assert listed.json()[-1] == response.json()
++
++
++def test_h03_correction_special_owner_is_isolated(task_client: TestClient) -> None:
++    owner_headers = headers("o'brien")
++    listed = task_client.get("/api/tasks", headers=owner_headers)
++    assert listed.status_code == 200
++    assert listed.json() == []
++    created = task_client.post("/api/tasks", headers=owner_headers, json={"title": "Personal task"})
++    assert created.status_code == 201
++    assert created.json()["owner"] == "o'brien"
++    listed = task_client.get("/api/tasks", headers=owner_headers)
++    assert listed.json() == [created.json()]
++    summary = task_client.get("/api/summary", headers=owner_headers)
++    assert summary.status_code == 200
++    assert summary.json() == {"owner": "o'brien", "total": 1, "byStatus": {"TODO": 1}, "highPriorityOpen": 0}
++    assert len(task_client.get("/api/tasks", headers=headers()).json()) == 2
++
++
++def test_h03_correction_rolls_back_failed_insert(task_client: TestClient) -> None:
++    connection = task_client.app.state.connection
++    connection.execute(
++        "CREATE TRIGGER reject_test_task BEFORE INSERT ON tasks "
++        "WHEN NEW.title = 'Rejected' BEGIN SELECT RAISE(ABORT, 'synthetic database error'); END"
++    )
++    response = task_client.post("/api/tasks", headers=headers(), json={"title": "Rejected"})
++    assert response.status_code == 500
++    assert not connection.in_transaction
++    assert response.json() == {"detail": "Task storage unavailable"}
++    assert len(task_client.get("/api/tasks", headers=headers()).json()) == 2
++    accepted = task_client.post("/api/tasks", headers=headers(), json={"title": "Accepted"})
++    assert accepted.status_code == 201
++
++
++def test_h03_repository_rolls_back_missing_created_row(task_client: TestClient) -> None:
++    connection = task_client.app.state.connection
++    connection.execute(
++        "CREATE TRIGGER remove_test_task AFTER INSERT ON tasks "
++        "BEGIN DELETE FROM tasks WHERE id = NEW.id OR id = 1; END"
++    )
++    response = task_client.post("/api/tasks", headers=headers(), json={"title": "Disappearing task"})
++    assert response.status_code == 500
++    assert response.json() == {"detail": "Task storage unavailable"}
++    assert not connection.in_transaction
++    listed = task_client.get("/api/tasks", headers=headers())
++    assert [task["id"] for task in listed.json()] == [1, 2]

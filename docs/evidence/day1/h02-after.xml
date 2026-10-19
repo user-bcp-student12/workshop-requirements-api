@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="0" skipped="0" tests="25" time="1.466" timestamp="2026-10-19T16:23:11.953694-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[omitted-student-expected_ids0]" time="0.085" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[omitted-trainer-expected_ids1]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[empty-student-expected_ids0]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[empty-trainer-expected_ids1]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[self-student-expected_ids0]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_queries[self-trainer-expected_ids1]" time="0.032" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[False-student]" time="0.038" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[False-trainer]" time="0.037" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[True-student]" time="0.037" />
+    <testcase classname="tests.test_api" name="test_h02_characterization_own_creation[True-trainer]" time="0.039" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-STUDENT]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-TRAINER]" time="0.033" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[student-expected_ids0-ADMIN]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-STUDENT]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-TRAINER]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_queries_use_identity[trainer-expected_ids1-ADMIN]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-STUDENT]" time="0.034" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-TRAINER]" time="0.046" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[student-ADMIN]" time="0.033" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-STUDENT]" time="0.035" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-TRAINER]" time="0.036" />
+    <testcase classname="tests.test_api" name="test_h02_correction_foreign_creation_uses_identity[trainer-ADMIN]" time="0.036" />
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[None]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[42]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h02_correction_ignores_untrusted_owner_values[supplied_owner2]" time="0.033" />
+  </testsuite>
+</testsuites>

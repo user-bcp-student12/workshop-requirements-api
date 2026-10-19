@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.724" timestamp="2026-10-19T17:08:41.278541-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_known_bug_h03_concurrent_rollback_preserves_success" time="0.076">
+      <failure message="AssertionError: A successful task was lost after another request rolled back&#10;assert {'createdAt': '2026-10-19 22:08:41', 'description': '', 'id': 4, 'owner': 'student', ...} in [{'createdAt': '2026-10-19 22:08:41', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:08:41', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}]&#10; +  where {'createdAt': '2026-10-19 22:08:41', 'description': '', 'id': 4, 'owner': 'student', ...} = json()&#10; +    where json = &lt;Response [201 Created]&gt;.json&#10; +  and   [{'createdAt': '2026-10-19 22:08:41', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:08:41', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}] = json()&#10; +    where json = &lt;Response [200 OK]&gt;.json">tests\test_api.py:765: in test_known_bug_h03_concurrent_rollback_preserves_success
+    assert created.json() in persisted.json(), "A successful task was lost after another request rolled back"
+E   AssertionError: A successful task was lost after another request rolled back
+E   assert {'createdAt': '2026-10-19 22:08:41', 'description': '', 'id': 4, 'owner': 'student', ...} in [{'createdAt': '2026-10-19 22:08:41', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:08:41', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}]
+E    +  where {'createdAt': '2026-10-19 22:08:41', 'description': '', 'id': 4, 'owner': 'student', ...} = json()
+E    +    where json = &lt;Response [201 Created]&gt;.json
+E    +  and   [{'createdAt': '2026-10-19 22:08:41', 'description': 'Separar responsabilidades en frontend', 'id': 1, 'owner': 'stude...'createdAt': '2026-10-19 22:08:41', 'description': 'Revisar seguridad de endpoints', 'id': 2, 'owner': 'student', ...}] = json()
+E    +    where json = &lt;Response [200 OK]&gt;.json</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

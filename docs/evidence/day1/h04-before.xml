@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="17" skipped="0" tests="33" time="1.894" timestamp="2026-10-19T17:47:58.480116-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_uploads_requirement" time="0.195" />
+    <testcase classname="tests.test_api" name="test_contract_upload_valid_edge_cases[empty-file]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_upload_valid_edge_cases[no-extension]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[missing]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[wrong-field]" time="0.047" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[text]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[empty-filename]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_contract_upload_invalid_input[missing-boundary]" time="0.022" />
+    <testcase classname="tests.test_api" name="test_contract_upload_io_errors_return_plain_500[read]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_contract_upload_io_errors_return_plain_500[write]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h04_characterization_valid_upload[requirements.txt]" time="0.027" />
+    <testcase classname="tests.test_api" name="test_h04_characterization_valid_upload[requirements.TXT]" time="0.028" />
+    <testcase classname="tests.test_api" name="test_h04_characterization_valid_upload[requirements.md]" time="0.029" />
+    <testcase classname="tests.test_api" name="test_h04_characterization_valid_upload[requirements.pdf]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h04_characterization_valid_upload[requirements]" time="0.025" />
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[../escape.txt]" time="0.037">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[..\\escape.txt]" time="0.031">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[nested/file.txt]" time="0.024">
+      <failure message="assert 500 == 400&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">E   assert 500 == 400
+     +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[nested\\file.txt]" time="0.029">
+      <failure message="assert 500 == 400&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">E   assert 500 == 400
+     +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[.]" time="0.028">
+      <failure message="assert 500 == 400&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">E   assert 500 == 400
+     +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[..]" time="0.028">
+      <failure message="assert 500 == 400&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">E   assert 500 == 400
+     +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[bad\x00.txt]" time="0.026">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_unsafe_names[trailing.txt ]" time="0.054">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_absolute_name_inside_test_directory" time="0.039">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_disallowed_extensions[.exe]" time="0.036">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_disallowed_extensions[.zip]" time="0.028">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_rejects_symbolic_destination" time="0.028">
+      <failure message="assert 201 == 400&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 400
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_file_limit_and_cleanup[128]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h04_file_limit_and_cleanup[129]" time="0.030">
+      <failure message="assert 201 == 413&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 413
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_collision_preserves_both_files" time="0.033">
+      <failure message="AssertionError: assert '&lt;repo&gt;\\.pytest_cache\\implementation-tmp\\test_h04_collision_preserves_b0\\uploads\\shared.txt' != '&lt;repo&gt;\\.pytest_cache\\implementation-tmp\\test_h04_collision_preserves_b0\\uploads\\shared.txt'">E   AssertionError: assert '&lt;repo&gt;\\.pytest_cache\\implementation-tmp\\test_h04_collision_preserves_b0\\uploads\\shared.txt' != '&lt;repo&gt;\\.pytest_cache\\implementation-tmp\\test_h04_collision_preserves_b0\\uploads\\shared.txt'</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_reads_bounded_blocks" time="0.028">
+      <failure message="assert ([-1] and False)&#10; +  where False = all(&lt;generator object test_h04_reads_bounded_blocks.&lt;locals&gt;.&lt;genexpr&gt; at 0x000002193D1C8E10&gt;)">E   assert ([-1] and False)
+     +  where False = all(&lt;generator object test_h04_reads_bounded_blocks.&lt;locals&gt;.&lt;genexpr&gt; at 0x000002193D1C8E10&gt;)</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_body_limit_precedes_parser[False]" time="0.030">
+      <failure message="assert 201 == 413&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 413
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_h04_body_limit_precedes_parser[True]" time="0.029">
+      <failure message="assert 201 == 413&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">E   assert 201 == 413
+     +  where 201 = &lt;Response [201 Created]&gt;.status_code</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

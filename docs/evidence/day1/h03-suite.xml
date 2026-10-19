@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="pytest tests">
+  <testsuite name="pytest" errors="0" failures="0" skipped="0" tests="20" time="1.973" timestamp="2026-10-19T15:56:10.808293-05:00" hostname="local-test-host">
+    <testcase classname="tests.test_api" name="test_lists_seeded_tasks" time="0.064" />
+    <testcase classname="tests.test_api" name="test_creates_task_and_summary" time="0.042" />
+    <testcase classname="tests.test_api" name="test_uploads_requirement" time="0.034" />
+    <testcase classname="tests.test_api" name="test_rejects_invalid_token" time="0.032" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_lists_in_order[None]" time="0.038" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_lists_in_order[]" time="0.030" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_lists_in_order[student]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_creates_and_persists[payload0-expected0]" time="0.038" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_creates_and_persists[payload1-expected1]" time="0.040" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_creates_and_persists[payload2-expected2]" time="0.038" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_summary_states" time="0.075" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_empty_owner" time="0.037" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_requires_object[None]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_requires_object[payload1]" time="0.031" />
+    <testcase classname="tests.test_api" name="test_h03_characterization_requires_object[not an object]" time="0.034" />
+    <testcase classname="tests.test_api" name="test_h03_correction_preserves_literal_text[Trainer's notes-Student's requirements]" time="0.044" />
+    <testcase classname="tests.test_api" name="test_h03_correction_preserves_literal_text[Quoted &quot;title&quot;-Revisi\xf3n \u65e5\u672c\u8a9e]" time="0.039" />
+    <testcase classname="tests.test_api" name="test_h03_correction_special_owner_is_isolated" time="0.044" />
+    <testcase classname="tests.test_api" name="test_h03_correction_rolls_back_failed_insert" time="0.049" />
+    <testcase classname="tests.test_api" name="test_h03_repository_rolls_back_missing_created_row" time="0.040" />
+  </testsuite>
+</testsuites>

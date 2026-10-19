@@ -1,0 +1,194 @@
+diff --git a/app/main.py b/app/main.py
+index 85cf686..611cb58 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -6,0 +7 @@ from pathlib import Path
++from threading import RLock
+@@ -48 +49,3 @@ def create_app(db_path: str | None = None, upload_dir: str | None = None) -> Fas
+-    task_service = TaskService(TaskRepository(connection))
++    connection_lock = RLock()
++    app.state.connection_lock = connection_lock
++    task_service = TaskService(TaskRepository(connection, connection_lock))
+diff --git a/app/task_repository.py b/app/task_repository.py
+index 6cb9709..5cfebd2 100644
+--- a/app/task_repository.py
++++ b/app/task_repository.py
+@@ -1,0 +2 @@ import sqlite3
++from _thread import RLock
+@@ -17 +18 @@ class TaskRepository:
+-    def __init__(self, connection: sqlite3.Connection) -> None:
++    def __init__(self, connection: sqlite3.Connection, connection_lock: RLock) -> None:
+@@ -18,0 +20 @@ class TaskRepository:
++        self.connection_lock = connection_lock
+@@ -21 +23,2 @@ class TaskRepository:
+-        return self.connection.execute(LIST_TASKS_SQL, (owner,)).fetchall()
++        with self.connection_lock:
++            return self.connection.execute(LIST_TASKS_SQL, (owner,)).fetchall()
+@@ -24 +27,2 @@ class TaskRepository:
+-        return self.connection.execute(GET_TASK_SQL, (task_id,)).fetchone()
++        with self.connection_lock:
++            return self.connection.execute(GET_TASK_SQL, (task_id,)).fetchone()
+@@ -27 +31,2 @@ class TaskRepository:
+-        return self.connection.execute(SUMMARY_ROWS_SQL, (owner,)).fetchall()
++        with self.connection_lock:
++            return self.connection.execute(SUMMARY_ROWS_SQL, (owner,)).fetchall()
+@@ -30,12 +35,13 @@ class TaskRepository:
+-        try:
+-            cursor = self.connection.execute(
+-                INSERT_TASK_SQL, (task.title, task.description, task.status, task.owner, task.priority)
+-            )
+-            row = self.get_task(cursor.lastrowid)
+-            if row is None:
+-                raise sqlite3.DatabaseError(MISSING_INSERTED_TASK)
+-            self.connection.commit()
+-            return row
+-        except sqlite3.Error:
+-            self.connection.rollback()
+-            raise
+\ No newline at end of file
++        with self.connection_lock:
++            try:
++                cursor = self.connection.execute(
++                    INSERT_TASK_SQL, (task.title, task.description, task.status, task.owner, task.priority)
++                )
++                row = self.get_task(cursor.lastrowid)
++                if row is None:
++                    raise sqlite3.DatabaseError(MISSING_INSERTED_TASK)
++                self.connection.commit()
++                return row
++            except sqlite3.Error:
++                self.connection.rollback()
++                raise
+\ No newline at end of file
+diff --git a/tests/test_api.py b/tests/test_api.py
+index 26dedf5..1e58bc9 100644
+--- a/tests/test_api.py
++++ b/tests/test_api.py
+@@ -3,0 +4 @@ import time
++from _thread import RLock as RLockType
+@@ -9 +10 @@ from pathlib import Path
+-from threading import Event
++from threading import Event, RLock
+@@ -22,0 +24 @@ from app.main import create_app
++from app.schemas import TaskInput
+@@ -730,5 +732,18 @@ CONCURRENT_TEST_TIMEOUT_SECONDS = 5
+-def test_known_bug_h03_concurrent_rollback_preserves_success(
+-    task_client: TestClient, monkeypatch: pytest.MonkeyPatch
+-) -> None:
+-    row_read = Event()
+-    release_read = Event()
++class ObservedConnectionLock:
++    def __init__(self, lock: RLockType, waiting: Event) -> None:
++        self.lock = lock
++        self.waiting = waiting
++
++    def __enter__(self) -> "ObservedConnectionLock":
++        if not self.lock.acquire(blocking=False):
++            self.waiting.set()
++            self.lock.acquire()
++        return self
++
++    def __exit__(self, *exception: object) -> None:
++        self.lock.release()
++
++
++@pytest.fixture
++def paused_transaction(monkeypatch: pytest.MonkeyPatch) -> tuple[Event, Event, Event]:
++    row_read, release_read, waiting = Event(), Event(), Event()
+@@ -735,0 +751 @@ def test_known_bug_h03_concurrent_rollback_preserves_success(
++    original_create_task = TaskRepository.create_task
+@@ -743,0 +760,10 @@ def test_known_bug_h03_concurrent_rollback_preserves_success(
++    def observed_create_task(repository: TaskRepository, task: TaskInput) -> sqlite3.Row:
++        if task.title == "Concurrent A":
++            lock = getattr(repository, "connection_lock", RLock())
++            monkeypatch.setattr(repository, "connection_lock", ObservedConnectionLock(lock, waiting), raising=False)
++        try:
++            return original_create_task(repository, task)
++        finally:
++            if task.title == "Rejected":
++                waiting.set()
++
+@@ -744,0 +771,8 @@ def test_known_bug_h03_concurrent_rollback_preserves_success(
++    monkeypatch.setattr(TaskRepository, "create_task", observed_create_task)
++    return row_read, release_read, waiting
++
++
++def test_known_bug_h03_concurrent_rollback_preserves_success(
++    task_client: TestClient, paused_transaction: tuple[Event, Event, Event]
++) -> None:
++    row_read, release_read, waiting = paused_transaction
+@@ -750 +784 @@ def test_known_bug_h03_concurrent_rollback_preserves_success(
+-    with ThreadPoolExecutor(max_workers=1) as executor:
++    with ThreadPoolExecutor(max_workers=2) as executor:
+@@ -756,3 +790,4 @@ def test_known_bug_h03_concurrent_rollback_preserves_success(
+-            rejected = task_client.post("/api/tasks", headers=request_headers, json={"title": "Rejected"})
+-            assert rejected.status_code == 500
+-            assert rejected.json() == {"detail": "Task storage unavailable"}
++            rejected_future = executor.submit(
++                task_client.post, "/api/tasks", headers=request_headers, json={"title": "Rejected"}
++            )
++            assert waiting.wait(CONCURRENT_TEST_TIMEOUT_SECONDS), "Second transaction did not reach contention or finish"
+@@ -761,0 +797,3 @@ def test_known_bug_h03_concurrent_rollback_preserves_success(
++        rejected = rejected_future.result(timeout=CONCURRENT_TEST_TIMEOUT_SECONDS)
++    assert rejected.status_code == 500
++    assert rejected.json() == {"detail": "Task storage unavailable"}
+@@ -765,0 +804,59 @@ def test_known_bug_h03_concurrent_rollback_preserves_success(
++    assert [task["id"] for task in persisted.json()] == [1, 2, created.json()["id"]]
++    assert [task["id"] for task in task_client.get("/api/tasks", headers=headers("trainer")).json()] == [3]
++
++
++@pytest.mark.parametrize("path", ["/api/tasks", "/api/summary"])
++def test_h03_reads_wait_for_transaction(
++    task_client: TestClient, paused_transaction: tuple[Event, Event, Event], path: str
++) -> None:
++    row_read, release_read, waiting = paused_transaction
++    request_headers = headers()
++    with ThreadPoolExecutor(max_workers=2) as executor:
++        created_future = executor.submit(
++            task_client.post, "/api/tasks", headers=request_headers, json={"title": "Concurrent A"}
++        )
++        try:
++            assert row_read.wait(CONCURRENT_TEST_TIMEOUT_SECONDS)
++            read_future = executor.submit(task_client.get, path, headers=request_headers)
++            read_future.add_done_callback(lambda completed: waiting.set())
++            assert waiting.wait(CONCURRENT_TEST_TIMEOUT_SECONDS)
++            completed_before_commit = read_future.done()
++        finally:
++            release_read.set()
++        created = created_future.result(timeout=CONCURRENT_TEST_TIMEOUT_SECONDS)
++        response = read_future.result(timeout=CONCURRENT_TEST_TIMEOUT_SECONDS)
++    assert not completed_before_commit, "Read exposed a transaction before its commit"
++    assert created.status_code == 201 and response.status_code == 200
++    expected_total = 3
++    if path == "/api/tasks":
++        assert len(response.json()) == expected_total
++        assert created.json() in response.json()
++        return
++    assert response.json()["total"] == expected_total
++
++
++def test_h03_parallel_valid_creations_persist(task_client: TestClient) -> None:
++    request_headers = headers()
++    with ThreadPoolExecutor(max_workers=2) as executor:
++        futures = [
++            executor.submit(task_client.post, "/api/tasks", headers=request_headers, json={"title": title})
++            for title in ["Parallel A", "Parallel B"]
++        ]
++        created = [future.result(timeout=CONCURRENT_TEST_TIMEOUT_SECONDS) for future in futures]
++    assert all(response.status_code == 201 for response in created)
++    assert len({response.json()["id"] for response in created}) == 2
++    listed = task_client.get("/api/tasks", headers=request_headers).json()
++    assert len(listed) == 4
++    assert all(response.json() in listed for response in created)
++
++
++def test_h03_connection_lock_is_per_application(task_client: TestClient, tmp_path: Path) -> None:
++    other = create_app(str(tmp_path / "other.db"), str(tmp_path / "other-uploads"))
++    with TestClient(other) as other_client:
++        first_lock = getattr(task_client.app.state, "connection_lock", None)
++        second_lock = getattr(other.state, "connection_lock", None)
++        assert first_lock is not None and second_lock is not None
++        assert first_lock is not second_lock
++        with first_lock:
++            response = other_client.get("/api/tasks", headers=headers())
++        assert response.status_code == 200 and len(response.json()) == 2
